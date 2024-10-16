@@ -1,17 +1,28 @@
-node_modules
+# Node.js dependencies
+node_modules/
+
+# Hardhat cache
+cache/
+artifacts/
+
+# dotenv environment variables file
 .env
 
-# Hardhat files
-/cache
-/artifacts
+# MacOS files
+.DS_Store
 
-# TypeChain files
-/typechain
-/typechain-types
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# solidity-coverage files
-/coverage
-/coverage.json
+# Hardhat specific
+typechain/
+coverage/
 
-# Hardhat Ignition default folder for deployments against a local node
-ignition/deployments/chain-31337
+# Ignore IDE-specific settings
+.idea/
+.vscode/
+
+# OS-generated files
+Thumbs.db
