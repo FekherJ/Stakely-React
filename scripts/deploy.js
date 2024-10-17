@@ -22,13 +22,13 @@ async function main() {
 
 
 
-  if (!stakingToken.address) {
+  if (!stakingToken.getAddress()) {
     console.error("Staking token deployment failed.");
   } else {
     console.log("Staking Token deployed to:", await stakingToken.getAddress());
   }
   
-  if (!rewardToken.address) {
+  if (!rewardToken.getAddress()) {
     console.error("Reward token deployment failed.");
   } else {
     console.log("Reward Token deployed to:", await rewardToken.getAddress());
@@ -37,20 +37,20 @@ async function main() {
 
   // Deploy the staking contract with stakingToken and rewardToken addresses
   const Staking = await ethers.getContractFactory("Staking");
-  const stakingContract = await Staking.deploy(stakingToken.address, rewardToken.address);
+  const stakingContract = await Staking.deploy(stakingToken.getAddress(), rewardToken.getAddress());
   await stakingContract.waitForDeployment();
-  console.log("Staking Contract deployed to:", stakingContract.address);
+  console.log("Staking Contract deployed to:", await stakingContract.getAddress());
 
   // Optionally, mint some tokens for testing purposes
-  const mintAmount = ethers.utils.parseUnits("1000", 18);
+  const mintAmount = ethers.parseUnits("1000", 18);
   
   // Mint staking tokens for the deployer
   await stakingToken.mint(deployer.address, mintAmount);
-  console.log(`Minted ${ethers.utils.formatUnits(mintAmount, 18)} STK to ${deployer.address}`);
+  console.log(`Minted ${ethers.formatUnits(mintAmount, 18)} STK to ${deployer.address}`);
   
   // Mint reward tokens for the deployer
   await rewardToken.mint(deployer.address, mintAmount);
-  console.log(`Minted ${ethers.utils.formatUnits(mintAmount, 18)} RWD to ${deployer.address}`);
+  console.log(`Minted ${ethers.formatUnits(mintAmount, 18)} RWD to ${deployer.address}`);
 }
 
 main()
