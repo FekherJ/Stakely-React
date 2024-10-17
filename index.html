@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staking Contract Interaction</title>
+    <!-- Updated ethers.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+    <h1>Staking Contract Interaction</h1>
+    <button onclick="connectWallet()">Connect Wallet</button>
+    <button onclick="stakeTokens()">Stake Tokens</button>
+    <button onclick="claimRewards()">Claim Rewards</button>
+    <button onclick="withdrawTokens()">Withdraw Tokens</button>
+
+    <script>
+        let provider;
+        let signer;
+        let stakingContract;
+
+        // Contract details (update these with your deployed contract's details)
+        const stakingContractAddress = 'YOUR_DEPLOYED_CONTRACT_ADDRESS';
+        const stakingContractABI = [ /* ABI goes here */ ]; 
+
+        // Connect to MetaMask
+        async function connectWallet() {
+            if (typeof window.ethereum !== 'undefined') {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+                signer = provider.getSigner();
+                console.log('Wallet connected:', await signer.getAddress());
+
+                // Instantiate staking contract
+                stakingContract = new ethers.Contract(stakingContractAddress, stakingContractABI, signer);
+            } else {
+                alert('MetaMask not found. Please install it to interact with the contract.');
+            }
+        }
+
+        // Example of staking tokens
+        async function stakeTokens() {
+            const amountToStake = ethers.utils.parseUnits('100', 18); // Stake 100 tokens
+            try {
+                const tx = await stakingContract.stake(amountToStake);
+                await tx.wait();
+                console.log('Tokens staked successfully!');
+            } catch (error) {
+                console.error('Error staking tokens:', error);
+            }
+        }
+
+        // Example of claiming rewards
+        async function claimRewards() {
+            try {
+                const tx = await stakingContract.claimRewards();
+                await tx.wait();
+                console.log('Rewards claimed successfully!');
+            } catch (error) {
+                console.error('Error claiming rewards:', error);
+            }
+        }
+
+        // Example of withdrawing staked tokens
+        async function withdrawTokens() {
+            const amountToWithdraw = ethers.utils.parseUnits('100', 18); // Withdraw 100 tokens
+            try {
+                const tx = await stakingContract.withdraw(amountToWithdraw);
+                await tx.wait();
+                console.log('Tokens withdrawn successfully!');
+            } catch (error) {
+                console.error('Error withdrawing tokens:', error);
+            }
+        }
+    </script>
+</body>
+</html>
