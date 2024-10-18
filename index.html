@@ -4,74 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staking Contract Interaction</title>
-    <!-- Updated ethers.js CDN -->
+    <!-- Include ethers.js library -->
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+    <!-- Link to external JavaScript file -->
+    <script src="staking.js" defer></script>
+    <style>
+        /* Simple styling for a cleaner look */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        input {
+            margin-bottom: 10px;
+            padding: 8px;
+        }
+        button {
+            padding: 10px;
+            margin: 5px;
+        }
+        .status {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
     <h1>Staking Contract Interaction</h1>
-    <button onclick="connectWallet()">Connect Wallet</button>
-    <button onclick="stakeTokens()">Stake Tokens</button>
-    <button onclick="claimRewards()">Claim Rewards</button>
-    <button onclick="withdrawTokens()">Withdraw Tokens</button>
 
-    <script>
-        let provider;
-        let signer;
-        let stakingContract;
+    <!-- Connect wallet -->
+    <button id="connectWalletButton" onclick="connectWallet()">Connect Wallet</button>
 
-        // Contract details (update these with your deployed contract's details)
-        const stakingContractAddress = 'YOUR_DEPLOYED_CONTRACT_ADDRESS';
-        const stakingContractABI = [ /* ABI goes here */ ]; 
+    <!-- Stake tokens -->
+    <h2>Stake Tokens</h2>
+    <input type="text" id="stakeAmount" placeholder="Amount to stake (in tokens)">
+    <button id="stakeButton" onclick="stakeTokens()">Stake Tokens</button>
 
-        // Connect to MetaMask
-        async function connectWallet() {
-            if (typeof window.ethereum !== 'undefined') {
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                await provider.send("eth_requestAccounts", []);
-                signer = provider.getSigner();
-                console.log('Wallet connected:', await signer.getAddress());
+    <!-- Claim rewards -->
+    <h2>Claim Rewards</h2>
+    <button id="claimRewardsButton" onclick="claimRewards()">Claim Rewards</button>
 
-                // Instantiate staking contract
-                stakingContract = new ethers.Contract(stakingContractAddress, stakingContractABI, signer);
-            } else {
-                alert('MetaMask not found. Please install it to interact with the contract.');
-            }
-        }
+    <!-- Withdraw tokens -->
+    <h2>Withdraw Tokens</h2>
+    <input type="text" id="withdrawAmount" placeholder="Amount to withdraw (in tokens)">
+    <button id="withdrawButton" onclick="withdrawTokens()">Withdraw Tokens</button>
 
-        // Example of staking tokens
-        async function stakeTokens() {
-            const amountToStake = ethers.utils.parseUnits('100', 18); // Stake 100 tokens
-            try {
-                const tx = await stakingContract.stake(amountToStake);
-                await tx.wait();
-                console.log('Tokens staked successfully!');
-            } catch (error) {
-                console.error('Error staking tokens:', error);
-            }
-        }
-
-        // Example of claiming rewards
-        async function claimRewards() {
-            try {
-                const tx = await stakingContract.claimRewards();
-                await tx.wait();
-                console.log('Rewards claimed successfully!');
-            } catch (error) {
-                console.error('Error claiming rewards:', error);
-            }
-        }
-
-        // Example of withdrawing staked tokens
-        async function withdrawTokens() {
-            const amountToWithdraw = ethers.utils.parseUnits('100', 18); // Withdraw 100 tokens
-            try {
-                const tx = await stakingContract.withdraw(amountToWithdraw);
-                await tx.wait();
-                console.log('Tokens withdrawn successfully!');
-            } catch (error) {
-                console.error('Error withdrawing tokens:', error);
-            }
-        }
-    </script>
+    <!-- Status output -->
+    <div class="status" id="statusMessage"></div>
 </body>
 </html>
