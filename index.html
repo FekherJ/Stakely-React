@@ -4,56 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staking Contract Interaction</title>
+    <!-- Bootstrap CSS for better UI -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Include ethers.js library -->
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
     <!-- Link to external JavaScript file -->
     <script src="staking.js" defer></script>
     <style>
-        /* Simple styling for a cleaner look */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f4f4f9;
+        .loading-spinner {
+            display: none;
+            margin-left: 10px;
         }
-        h1 {
-            font-size: 24px;
+
+        #dashboard {
+            margin-top: 20px;
         }
-        input {
-            margin-bottom: 10px;
-            padding: 8px;
-        }
-        button {
-            padding: 10px;
-            margin: 5px;
-        }
+
         .status {
             margin-top: 20px;
-            font-size: 14px;
+            font-size: 16px;
             color: #555;
         }
     </style>
 </head>
-<body>
-    <h1>Staking Contract Interaction</h1>
+<body class="container mt-5">
+    <h1 class="text-center mb-4">Staking Contract Interaction</h1>
 
     <!-- Connect wallet -->
-    <button id="connectWalletButton" onclick="connectWallet()">Connect Wallet</button>
+    <div class="text-center mb-3">
+        <button class="btn btn-primary" id="connectWalletButton" onclick="connectWallet()">Connect Wallet</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="row">
+        <div class="col-md-4">
+            <h4>Staking Balance</h4>
+            <p id="stakingBalance">0 STK</p>
+        </div>
+        <div class="col-md-4">
+            <h4>Reward Balance</h4>
+            <p id="rewardBalance">0 RWD</p>
+        </div>
+        <div class="col-md-4">
+            <h4>Wallet Balance</h4>
+            <p id="walletBalance">0 ETH</p>
+        </div>
+    </div>
 
     <!-- Stake tokens -->
     <h2>Stake Tokens</h2>
-    <input type="text" id="stakeAmount" placeholder="Amount to stake (in tokens)">
-    <button id="stakeButton" onclick="stakeTokens()">Stake Tokens</button>
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" id="stakeAmount" placeholder="Amount to stake (in tokens)">
+        <button class="btn btn-success" id="stakeButton" onclick="stakeTokens()">Stake Tokens</button>
+        <span class="loading-spinner spinner-border spinner-border-sm" id="stakeSpinner"></span>
+    </div>
 
     <!-- Claim rewards -->
     <h2>Claim Rewards</h2>
-    <button id="claimRewardsButton" onclick="claimRewards()">Claim Rewards</button>
+    <div class="text-center mb-3">
+        <button class="btn btn-warning" id="claimRewardsButton" onclick="claimRewards()">Claim Rewards</button>
+        <span class="loading-spinner spinner-border spinner-border-sm" id="claimSpinner"></span>
+    </div>
 
     <!-- Withdraw tokens -->
     <h2>Withdraw Tokens</h2>
-    <input type="text" id="withdrawAmount" placeholder="Amount to withdraw (in tokens)">
-    <button id="withdrawButton" onclick="withdrawTokens()">Withdraw Tokens</button>
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" id="withdrawAmount" placeholder="Amount to withdraw (in tokens)">
+        <button class="btn btn-danger" id="withdrawButton" onclick="withdrawTokens()">Withdraw Tokens</button>
+        <span class="loading-spinner spinner-border spinner-border-sm" id="withdrawSpinner"></span>
+    </div>
 
     <!-- Status output -->
-    <div class="status" id="statusMessage"></div>
+    <div class="status text-center" id="statusMessage"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
