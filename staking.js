@@ -2,7 +2,7 @@ let provider;
 let signer;
 let stakingContract;
 
-const stakingContractAddress = 'YOUR_DEPLOYED_CONTRACT_ADDRESS';  // Replace with your actual Sepolia contract address
+const stakingContractAddress = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';  // Replace with your actual Sepolia contract address
 
 // Fetch the ABI from the external JSON file
 async function loadABI() {
@@ -21,6 +21,9 @@ function updateStatus(message) {
     document.getElementById("statusMessage").innerText = message;
 }
 
+
+
+// Connect to MetaMask and explicitly specify Sepolia network
 // Connect to MetaMask and explicitly specify Sepolia network
 async function connectWallet() {
     if (typeof window.ethereum !== 'undefined') {
@@ -58,6 +61,7 @@ async function connectWallet() {
         alert('MetaMask not found. Please install it to interact with the contract.');
     }
 }
+
 
 // Stake tokens
 async function stakeTokens() {
