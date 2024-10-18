@@ -2,7 +2,7 @@ let provider;
 let signer;
 let stakingContract;
 
-const stakingContractAddress = '0xYourActualContractAddress';  // Replace with your actual Sepolia contract address
+const stakingContractAddress = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';  // Replace with your actual Sepolia contract address
 
 // Fetch the ABI from the external JSON file
 async function loadABI() {
@@ -47,11 +47,12 @@ async function connectWallet() {
 
             const address = await signer.getAddress();
             updateStatus('Wallet connected: ' + address);
-            updateDashboard();
 
-            const abi = await loadABI();
+            const abi = await loadABI();  // Load ABI before creating contract instance
             if (abi) {
                 stakingContract = new ethers.Contract(stakingContractAddress, abi, signer);
+                console.log("Contract connected:", stakingContract);
+                updateDashboard();  // Call this after stakingContract is defined
             } else {
                 updateStatus('Failed to load contract ABI.');
             }
@@ -81,24 +82,26 @@ async function updateDashboard() {
 
 // Stake tokens
 async function stakeTokens() {
-    const amountToStake = document.getElementById("stakeAmount").value;
-    if (!amountToStake) {
-        updateStatus("Please enter an amount to stake.");
-        return;
+    const amountToStake = document.getElementById('stakeAmount').value;  // Get the value from the input field
+    if (amountToStake === '' || amountToStake === '0') {
+      alert('Please enter a valid amount to stake.');
+      return;
     }
-    showLoadingSpinner('stakeSpinner', true);
+  
+    // Convert the amount from ether to wei (make sure to specify the right number of decimals, typically 18 for tokens)
+    const stakeAmountInWei = ethers.utils.parseUnits(amountToStake, 18);
+  
     try {
-        const parsedAmount = ethers.utils.parseUnits(amountToStake, 18);
-        const tx = await stakingContract.stake(parsedAmount);
-        await tx.wait();
-        updateStatus('Tokens staked successfully!');
-        updateDashboard();
+      const tx = await stakingContract.stake(stakeAmountInWei);
+      await tx.wait();
+      console.log('Tokens staked:', amountToStake);
+      alert(`Successfully staked ${amountToStake} tokens!`);
     } catch (error) {
-        updateStatus('Error staking tokens: ' + error.message);
-    } finally {
-        showLoadingSpinner('stakeSpinner', false);
+      console.error('Error staking tokens:', error);
+      alert(`Error staking tokens: ${error.message}`);
     }
-}
+  }
+  
 
 // Claim rewards
 async function claimRewards() {
