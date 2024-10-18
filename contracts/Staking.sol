@@ -117,4 +117,9 @@ contract Staking is Ownable, ReentrancyGuard, Pausable {
     function unpause() external onlyOwner {
         _unpause(); // Unpause the contract
     }
+
+    // New function to change the reward rate, ensuring rewards are updated first
+    function setRewardRate(uint256 newRate) external onlyOwner updateReward(address(0)) {
+        rewardRate = newRate;
+    }
 }

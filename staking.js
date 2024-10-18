@@ -2,7 +2,7 @@ let provider;
 let signer;
 let stakingContract;
 
-const stakingContractAddress = 'YOUR_DEPLOYED_CONTRACT_ADDRESS';  // Replace with your contract address
+const stakingContractAddress = 'YOUR_DEPLOYED_CONTRACT_ADDRESS';  // Replace with your actual Sepolia contract address
 
 // Fetch the ABI from the external JSON file
 async function loadABI() {
@@ -21,16 +21,31 @@ function updateStatus(message) {
     document.getElementById("statusMessage").innerText = message;
 }
 
-// Connect to MetaMask
+// Connect to MetaMask and explicitly specify Sepolia network
 async function connectWallet() {
     if (typeof window.ethereum !== 'undefined') {
         try {
-            provider = new ethers.providers.Web3Provider(window.ethereum);
+            // Explicitly set the provider to Sepolia
+            provider = new ethers.providers.Web3Provider(window.ethereum, {
+                name: "sepolia",
+                chainId: 11155111  // Sepolia network chain ID
+            });
+
+            // Request MetaMask accounts
             await provider.send("eth_requestAccounts", []);
             signer = provider.getSigner();
+
+            // Ensure we're connected to Sepolia
+            const network = await provider.getNetwork();
+            if (network.chainId !== 11155111) {
+                updateStatus('Please connect MetaMask to the Sepolia network.');
+                return;
+            }
+
             updateStatus('Wallet connected: ' + await signer.getAddress());
 
-            const abi = await loadABI();  // Load the ABI
+            // Load the ABI and initialize the contract
+            const abi = await loadABI();
             if (abi) {
                 stakingContract = new ethers.Contract(stakingContractAddress, abi, signer);
             } else {
