@@ -65,6 +65,31 @@
             box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(15px);
         }
+
+        /* Spinner styles */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            width: 16px;
+            height: 16px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinner-wrapper {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
     </style>
 </head>
 <body>
@@ -77,6 +102,25 @@
         <div class="text-center mb-8">
             <button id="connectWalletButton" onclick="connectWallet()" 
                 class="btn-primary text-xl">Connect Wallet</button>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div class="glass p-8 mb-8">
+            <h2 class="text-3xl mb-4">📊 User Dashboard</h2>
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <p>Wallet Balance (ETH):</p>
+                    <p id="walletBalance" class="font-bold text-lg">0.0000 ETH</p>
+                </div>
+                <div>
+                    <p>Staking Balance (STK):</p>
+                    <p id="stakingBalance" class="font-bold text-lg">0.0000 STK</p>
+                </div>
+                <div>
+                    <p>Reward Balance (RWD):</p>
+                    <p id="rewardBalance" class="font-bold text-lg">0.0000 RWD</p>
+                </div>
+            </div>
         </div>
 
         <!-- Tab Navigation -->
@@ -94,6 +138,7 @@
                     class="flex-1 p-3 bg-transparent border-b border-gray-300 text-white text-xl focus:outline-none mb-4 md:mb-0">
                 <button id="stakeButton" onclick="stakeTokens()" 
                     class="btn-primary text-xl ml-4">Stake Tokens</button>
+                <span id="stakeSpinner" class="spinner hidden"></span>
             </div>
         </div>
 
@@ -105,6 +150,7 @@
                     class="flex-1 p-3 bg-transparent border-b border-gray-300 text-white text-xl focus:outline-none mb-4 md:mb-0">
                 <button id="withdrawButton" onclick="withdrawTokens()" 
                     class="btn-primary text-xl ml-4">Withdraw Tokens</button>
+                <span id="withdrawSpinner" class="spinner hidden"></span>
             </div>
         </div>
 
@@ -116,6 +162,7 @@
                     class="flex-1 p-3 bg-transparent border-b border-gray-300 text-white text-xl focus:outline-none mb-4 md:mb-0">
                 <button id="claimRewardsButton" onclick="claimRewards()" 
                     class="btn-primary text-xl ml-4">Claim Rewards</button>
+                <span id="claimSpinner" class="spinner hidden"></span>
             </div>
         </div>
 

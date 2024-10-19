@@ -41,6 +41,7 @@ async function loadERC20ABI() {
     }
 }
 
+// Load the ABI for the staking contract
 async function loadStakingABI() {
     try {
         const response = await fetch('./abi/staking_abi.json');
@@ -63,6 +64,26 @@ function showLoadingSpinner(buttonId, show) {
     const spinner = document.getElementById(buttonId);
     spinner.style.display = show ? 'inline-block' : 'none';
 }
+
+// Fund the staking contract with reward tokens
+async function fundStakingContractWithRewards(rewardTokenAddress, stakingContractAddress, amount) {
+    const rewardTokenContract = new ethers.Contract(rewardTokenAddress, erc20ABI, signer);
+    const amountInWei = ethers.utils.parseUnits(amount, 18);  // Adjust decimals based on your token
+
+    try {
+        // Transfer the reward tokens to the staking contract
+        const transferTx = await rewardTokenContract.transfer(stakingContractAddress, amountInWei);
+        await transferTx.wait();
+
+        console.log(`Successfully transferred ${amount} reward tokens to the staking contract.`);
+        alert(`Successfully transferred ${amount} reward tokens to the contract!`);
+    } catch (error) {
+        console.error("Error transferring reward tokens:", error);
+        alert(`Error transferring reward tokens: ${error.message}`);
+    }
+}
+
+// Example usage: fundStakingContractWithRewards('0xYourRewardTokenAddress', stakingContractAddress, '100');
 
 // Connect to MetaMask and explicitly specify Sepolia network with retry logic
 async function connectWallet() {
@@ -180,27 +201,22 @@ async function stakeTokens() {
     }
 }
 
-
-
 // Claim rewards with retry logic
 async function claimRewards() {
     showLoadingSpinner('claimSpinner', true);
+    const claimAmount = document.getElementById('claimAmount').value.trim();
 
-    // Get the amount of rewards to claim from the input
-    const amountToClaim = document.getElementById('claimAmount').value.trim();
-    if (!amountToClaim || amountToClaim === '0') {
-        alert('Please enter a valid reward amount to claim.');
+    if (!claimAmount || claimAmount === '0') {
+        alert('Please enter a valid amount to claim.');
         showLoadingSpinner('claimSpinner', false);
         return;
     }
 
     try {
-        // Convert the entered amount to Wei
-        const claimAmountInWei = ethers.utils.parseUnits(amountToClaim, 18);
+        const claimAmountInWei = ethers.utils.parseUnits(claimAmount, 18);
+        console.log("Claiming Amount in Wei:", claimAmountInWei.toString());
 
-        // Log the contract's reward token balance
-        const rewardTokenAddress = await stakingContract.rewardToken();  // Assuming this is available in your staking contract
-        const rewardTokenContract = new ethers.Contract(rewardTokenAddress, erc20ABI, signer);
+        // Fetch the contract's available reward balance
         const rewardBalance = await rewardTokenContract.balanceOf(stakingContract.address);
 
         console.log(`Staking contract reward balance: ${ethers.utils.formatUnits(rewardBalance, 18)} RWD`);
@@ -224,7 +240,7 @@ async function claimRewards() {
         }
 
         // Proceed with claiming rewards if balance is sufficient
-        const tx = await retryWithDelay(() => stakingContract.claimReward(claimAmountInWei), 3, 5000);
+        const tx = await retryWithDelay(() => stakingContract.getReward(), 3, 5000); // Use 'getReward()' method
         await tx.wait();
         updateStatus('Rewards claimed successfully!');
         updateDashboard();
@@ -234,12 +250,6 @@ async function claimRewards() {
         showLoadingSpinner('claimSpinner', false);
     }
 }
-
-
-
-
-
-
 
 // Withdraw tokens with retry logic
 async function withdrawTokens() {
