@@ -185,8 +185,46 @@ async function stakeTokens() {
 // Claim rewards with retry logic
 async function claimRewards() {
     showLoadingSpinner('claimSpinner', true);
+
+    // Get the amount of rewards to claim from the input
+    const amountToClaim = document.getElementById('claimAmount').value.trim();
+    if (!amountToClaim || amountToClaim === '0') {
+        alert('Please enter a valid reward amount to claim.');
+        showLoadingSpinner('claimSpinner', false);
+        return;
+    }
+
     try {
-        const tx = await retryWithDelay(() => stakingContract.getReward(), 3, 5000);
+        // Convert the entered amount to Wei
+        const claimAmountInWei = ethers.utils.parseUnits(amountToClaim, 18);
+
+        // Log the contract's reward token balance
+        const rewardTokenAddress = await stakingContract.rewardToken();  // Assuming this is available in your staking contract
+        const rewardTokenContract = new ethers.Contract(rewardTokenAddress, erc20ABI, signer);
+        const rewardBalance = await rewardTokenContract.balanceOf(stakingContract.address);
+
+        console.log(`Staking contract reward balance: ${ethers.utils.formatUnits(rewardBalance, 18)} RWD`);
+
+        // Fetch the user's available rewards
+        const userReward = await stakingContract.rewards(await signer.getAddress());
+        console.log(`User Reward: ${ethers.utils.formatUnits(userReward, 18)} RWD`);
+
+        // Ensure user cannot claim more than their available rewards
+        if (claimAmountInWei.gt(userReward)) {
+            alert('The amount exceeds your available rewards.');
+            showLoadingSpinner('claimSpinner', false);
+            return;
+        }
+
+        // Ensure the contract has enough tokens to fulfill the reward claim
+        if (claimAmountInWei.gt(rewardBalance)) {
+            alert('Not enough reward tokens in the contract to fulfill the reward claim.');
+            showLoadingSpinner('claimSpinner', false);
+            return;
+        }
+
+        // Proceed with claiming rewards if balance is sufficient
+        const tx = await retryWithDelay(() => stakingContract.claimReward(claimAmountInWei), 3, 5000);
         await tx.wait();
         updateStatus('Rewards claimed successfully!');
         updateDashboard();
@@ -196,6 +234,12 @@ async function claimRewards() {
         showLoadingSpinner('claimSpinner', false);
     }
 }
+
+
+
+
+
+
 
 // Withdraw tokens with retry logic
 async function withdrawTokens() {
