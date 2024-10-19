@@ -1,5 +1,6 @@
 require("@nomicfoundation/hardhat-ethers");
-require('dotenv').config(); // Added to load .env variables
+require('dotenv').config(); // Load .env variables
+require('@nomiclabs/hardhat-etherscan');
 
 if (!process.env.ALCHEMY_URL || !process.env.PRIVATE_KEY) {
   console.error("Error: Please check your .env file to ensure that ALCHEMY_URL and PRIVATE_KEY are set correctly.");
@@ -9,18 +10,15 @@ if (!process.env.ALCHEMY_URL || !process.env.PRIVATE_KEY) {
 module.exports = {
   solidity: "0.8.24",
   networks: {
-      sepolia: {  // --network sepolia
-        url: process.env.ALCHEMY_URL,  // Your Infura/Alchemy Sepolia URL
-        accounts: [process.env.PRIVATE_KEY]  // Your MetaMask private key
-      },
-      localhost: {
-        url: "http://127.0.0.1:8545", // Default local network settings for Hardhat
-        chainId: 1337, 
-      },
-      
-      hardhat: {
-        chainId: 1337,
-      },
-
+    sepolia: {
+      url: process.env.ALCHEMY_URL,
+      accounts: [process.env.PRIVATE_KEY],
+      timeout: 600000,  // Increase timeout to 10 minutes
+      gasMultiplier: 1.5,  // Ensure you're slightly overestimating gas
     },
+  },
+
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY,  // Sepolia Etherscan API key
+  },
 };

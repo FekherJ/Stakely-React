@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.9.6",
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "undici": "^6.20.1"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.8",
@@ -21,6 +22,7 @@
     "@nomicfoundation/hardhat-verify": "^2.0.11",
     "@nomicfoundation/ignition-core": "^0.15.6",
     "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-etherscan": "^3.1.8",
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^9.1.0",
     "@types/chai": "^5.0.0",
