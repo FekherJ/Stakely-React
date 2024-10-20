@@ -58,37 +58,56 @@
             background-color: #ff5714;
         }
 
-        .card {
-            background-color: rgba(255, 255, 255, 0.07);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(15px);
+        .fixed-top-right {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 1000;
         }
 
-        /* Spinner styles */
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top: 4px solid #fff;
-            width: 16px;
-            height: 16px;
-            animation: spin 2s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .spinner-wrapper {
-            display: inline-flex;
+        /* Notification Styles */
+        #notification {
+            display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
+            background-color: #333;
+            color: #fff;
+            padding: 16px;
+            border-radius: 8px;
+            width: 300px;
+            z-index: 1000;
+            opacity: 0.95;
+            transition: opacity 0.5s ease;
+        }
+
+        #notification.success {
+            background-color: #28a745;
+        }
+
+        #notification.error {
+            background-color: #dc3545;
+        }
+
+        .notification-bottom-right {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .show {
+            display: flex;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -98,10 +117,14 @@
         <!-- Header Section -->
         <h1 class="text-5xl font-bold text-center mb-8">🌌 Web3 Staking Platform</h1>
 
+        <!-- Wallet Connection Status (Top Right) -->
+        <div id="connectionStatus" class="fixed-top-right glass p-4 text-sm">
+            Not connected
+        </div>
+
         <!-- Wallet Connection Section -->
         <div class="text-center mb-8">
-            <button id="connectWalletButton" onclick="connectWallet()" 
-                class="btn-primary text-xl">Connect Wallet</button>
+            <button id="connectWalletButton" onclick="connectWallet()" class="btn-primary text-xl">Connect Wallet</button>
         </div>
 
         <!-- Dashboard Section -->
@@ -136,9 +159,7 @@
             <div class="flex flex-col md:flex-row items-center">
                 <input type="text" id="stakeAmount" placeholder="Amount to stake (in tokens)" 
                     class="flex-1 p-3 bg-transparent border-b border-gray-300 text-white text-xl focus:outline-none mb-4 md:mb-0">
-                <button id="stakeButton" onclick="stakeTokens()" 
-                    class="btn-primary text-xl ml-4">Stake Tokens</button>
-                <span id="stakeSpinner" class="spinner hidden"></span>
+                <button id="stakeButton" onclick="stakeTokens()" class="btn-primary text-xl ml-4">Stake Tokens</button>
             </div>
         </div>
 
@@ -148,9 +169,7 @@
             <div class="flex flex-col md:flex-row items-center">
                 <input type="text" id="withdrawAmount" placeholder="Amount to withdraw (in tokens)" 
                     class="flex-1 p-3 bg-transparent border-b border-gray-300 text-white text-xl focus:outline-none mb-4 md:mb-0">
-                <button id="withdrawButton" onclick="withdrawTokens()" 
-                    class="btn-primary text-xl ml-4">Withdraw Tokens</button>
-                <span id="withdrawSpinner" class="spinner hidden"></span>
+                <button id="withdrawButton" onclick="withdrawTokens()" class="btn-primary text-xl ml-4">Withdraw Tokens</button>
             </div>
         </div>
 
@@ -160,18 +179,17 @@
             <div class="flex flex-col md:flex-row items-center">
                 <input type="text" id="claimAmount" placeholder="Amount of rewards to claim (in tokens)" 
                     class="flex-1 p-3 bg-transparent border-b border-gray-300 text-white text-xl focus:outline-none mb-4 md:mb-0">
-                <button id="claimRewardsButton" onclick="claimRewards()" 
-                    class="btn-primary text-xl ml-4">Claim Rewards</button>
-                <span id="claimSpinner" class="spinner hidden"></span>
+                <button id="claimRewardsButton" onclick="claimRewards()" class="btn-primary text-xl ml-4">Claim Rewards</button>
             </div>
         </div>
 
-        <!-- Status Message -->
-        <div id="statusMessage" class="text-center text-lg text-gray-300 mt-8"></div>
-
+        <!-- Action Notifications (Bottom Right) -->
+        <div id="notification" class="notification-bottom-right hidden">
+            <span id="notificationMessage"></span>
+            <button onclick="hideNotification()" class="close-btn">&times;</button>
+        </div>
     </div>
 
-    <!-- Tab Navigation Logic -->
     <script>
         function showTab(tabName) {
             const tabs = ['stake', 'withdraw', 'rewards'];
