@@ -6,8 +6,8 @@ const localhostChainId = 31337;
 
 // Contract addresses for different networks
 const contractAddresses = {
-    sepolia: '0x56D2caa1B5E42614764a9F1f71D6DbfFd66487a4',  // Sepolia contract address
-    localhost: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'  // Localhost (Hardhat) contract address
+    sepolia: '0x56D2caa1B5E42614764a9F1f71D6DbfFd66487a4',
+    localhost: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'
 };
 
 // Function to show notifications at the bottom-right of the screen
@@ -15,9 +15,10 @@ function showNotification(message, type = 'success') {
     const notification = document.getElementById("notification");
     const notificationMessage = document.getElementById("notificationMessage");
 
+    // Set the message and type (success or error)
     notificationMessage.innerText = message;
     notification.classList.remove("hidden");
-
+    
     if (type === 'success') {
         notification.classList.add("success");
         notification.classList.remove("error");
@@ -26,13 +27,19 @@ function showNotification(message, type = 'success') {
         notification.classList.remove("success");
     }
 
-    // Auto-hide after 5 seconds
-    setTimeout(hideNotification, 5000);
+    // Display notification with animation
+    notification.classList.add("show");
+
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        hideNotification();
+    }, 3000);
 }
 
 function hideNotification() {
     const notification = document.getElementById("notification");
-    notification.classList.add("hidden");
+    // Hide with smooth transition
+    notification.classList.remove("show");
 }
 
 // Function to update connection status on the top-right of the screen
