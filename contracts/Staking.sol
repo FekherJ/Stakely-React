@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 // Staking contract allows users to stake tokens and earn rewards
 // Contract includes reentrancy protection, pausable functionality, and automatic reward compounding
 contract Staking is Ownable, ReentrancyGuard, Pausable {
-    
+
     // Public variables to store the staking token and the reward token
     IERC20 public stakingToken;
     IERC20 public rewardToken;
@@ -31,91 +31,94 @@ contract Staking is Ownable, ReentrancyGuard, Pausable {
     mapping(address => uint256) public balances;
 
     // Events to log actions like staking, withdrawing, reward payment, and reward compounding
-    event Staked(address indexed user, uint256 amount);       // Logs staking action
-    event Withdrawn(address indexed user, uint256 amount);    // Logs withdrawal action
-    event RewardPaid(address indexed user, uint256 reward);   // Logs reward payment
-    event Compounded(address indexed user, uint256 reward);   // Logs reward compounding action
+    event Staked(address indexed user, uint256 amount);
+    event Withdrawn(address indexed user, uint256 amount);
+    event RewardPaid(address indexed user, uint256 reward);
+    event Compounded(address indexed user, uint256 reward);
+    event RewardAdded(uint256 rewardAmount);   // New event to log when new rewards are added
 
     // Constructor initializes the staking and reward tokens with the provided addresses
     constructor(address _stakingToken, address _rewardToken) {
-        stakingToken = IERC20(_stakingToken); // Staking token
-        rewardToken = IERC20(_rewardToken);   // Reward token
+        stakingToken = IERC20(_stakingToken);
+        rewardToken = IERC20(_rewardToken);
     }
 
     // Stake function: Allows users to stake a specific amount of tokens
-    // Uses nonReentrant to prevent reentrancy attacks and whenNotPaused to allow staking only when contract is not paused
     function stake(uint256 amount) external nonReentrant whenNotPaused updateReward(msg.sender) {
-        require(amount > 0, "Cannot stake 0"); // Check that the stake amount is non-zero
-        balances[msg.sender] += amount;        // Increase user's staking balance
-        require(stakingToken.transferFrom(msg.sender, address(this), amount), "Stake transfer failed"); // Transfer tokens to the contract
-        emit Staked(msg.sender, amount);       // Emit event for the staking action
+        require(amount > 0, "Cannot stake 0");
+        balances[msg.sender] += amount;
+        require(stakingToken.transferFrom(msg.sender, address(this), amount), "Stake transfer failed");
+        emit Staked(msg.sender, amount);
     }
 
     // Withdraw function: Allows users to withdraw staked tokens
-    // Uses nonReentrant and whenNotPaused, and ensures rewards are updated before withdrawal
     function withdraw(uint256 amount) public nonReentrant whenNotPaused updateReward(msg.sender) {
-        require(amount > 0, "Cannot withdraw 0");         // Check for non-zero withdrawal
-        require(balances[msg.sender] >= amount, "Insufficient balance"); // Ensure the user has enough balance
-        balances[msg.sender] -= amount;                   // Decrease user's staking balance
-        require(stakingToken.transfer(msg.sender, amount), "Withdraw transfer failed"); // Transfer tokens back to the user
-        emit Withdrawn(msg.sender, amount);               // Emit event for the withdrawal
+        require(amount > 0, "Cannot withdraw 0");
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+        balances[msg.sender] -= amount;
+        require(stakingToken.transfer(msg.sender, amount), "Withdraw transfer failed");
+        emit Withdrawn(msg.sender, amount);
     }
 
     // getReward function: Allows users to claim their earned rewards
-    // Uses nonReentrant and whenNotPaused to ensure safety
     function getReward() public nonReentrant whenNotPaused updateReward(msg.sender) {
-        uint256 reward = rewards[msg.sender];             // Get the user's reward balance
-        require(reward > 0, "No reward available");       // Check if there is a reward to claim
-        rewards[msg.sender] = 0;                          // Reset the user's reward balance
-        require(rewardToken.transfer(msg.sender, reward), "Reward transfer failed"); // Transfer the reward tokens to the user
-        emit RewardPaid(msg.sender, reward);              // Emit event for reward payment
+        uint256 reward = rewards[msg.sender];
+        require(reward > 0, "No reward available");
+        rewards[msg.sender] = 0;
+        require(rewardToken.transfer(msg.sender, reward), "Reward transfer failed");
+        emit RewardPaid(msg.sender, reward);
     }
 
     // compoundRewards function: Allows users to automatically stake their rewards into the staking pool
     function compoundRewards() public nonReentrant whenNotPaused updateReward(msg.sender) {
-        uint256 reward = rewards[msg.sender];             // Get the user's reward balance
-        require(reward > 0, "No reward available to compound"); // Ensure the user has rewards to compound
-        rewards[msg.sender] = 0;                          // Reset the user's reward balance
-        balances[msg.sender] += reward;                   // Add the reward to the user's staking balance
-        emit Compounded(msg.sender, reward);              // Emit event for compounding the rewards
+        uint256 reward = rewards[msg.sender];
+        require(reward > 0, "No reward available to compound");
+        rewards[msg.sender] = 0;
+        balances[msg.sender] += reward;
+        emit Compounded(msg.sender, reward);
     }
 
     // updateReward modifier: Updates the user's reward information before executing any staking, withdrawal, or reward claim action
     modifier updateReward(address account) {
-        rewardPerTokenStored = rewardPerToken();          // Update the stored reward per token
-        lastUpdateBlock = block.number;                   // Update the last update block
-        rewards[account] = earned(account);               // Update the user's earned rewards
-        userRewardPerTokenPaid[account] = rewardPerTokenStored; // Set the user's reward per token paid to the new value
-        _;                                                // Proceed with the rest of the function
+        rewardPerTokenStored = rewardPerToken();
+        lastUpdateBlock = block.number;
+        rewards[account] = earned(account);
+        userRewardPerTokenPaid[account] = rewardPerTokenStored;
+        _;
     }
 
     // rewardPerToken function: Calculates and returns the current reward per token based on the elapsed blocks and total staked tokens
     function rewardPerToken() public view returns (uint256) {
         if (totalSupply() == 0) {
-            return rewardPerTokenStored; // If no tokens are staked, return the stored value
+            return rewardPerTokenStored;
         }
-        // Calculate new reward per token based on the blocks since the last update and total staked tokens
         return rewardPerTokenStored + ((block.number - lastUpdateBlock) * rewardRate * 1e18) / totalSupply();
     }
 
     // earned function: Calculates the total rewards earned by a user
-    // This function calculates the user's earned rewards based on their staking balance and previously paid rewards
     function earned(address account) public view returns (uint256) {
         return (balances[account] * (rewardPerToken() - userRewardPerTokenPaid[account])) / 1e18 + rewards[account];
     }
 
     // totalSupply function: Returns the total amount of staked tokens in the contract
     function totalSupply() public view returns (uint256) {
-        return stakingToken.balanceOf(address(this)); // Returns the contract's balance of staked tokens
+        return stakingToken.balanceOf(address(this));
     }
 
     // Pausable functions to allow the owner to pause and unpause the contract in case of emergency
     function pause() external onlyOwner {
-        _pause(); // Pause the contract
+        _pause();
     }
 
     function unpause() external onlyOwner {
-        _unpause(); // Unpause the contract
+        _unpause();
+    }
+
+    // Function to notify contract about newly added rewards
+    function notifyRewardAmount(uint256 rewardAmount) external onlyOwner updateReward(address(0)) {
+        require(rewardAmount > 0, "Reward amount should be greater than 0");
+        require(rewardToken.transferFrom(msg.sender, address(this), rewardAmount), "Transfer failed");
+        emit RewardAdded(rewardAmount);
     }
 
     // New function to change the reward rate, ensuring rewards are updated first

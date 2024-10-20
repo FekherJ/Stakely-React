@@ -1,8 +1,14 @@
 let provider;
 let signer;
 let stakingContract;
-let erc20ABI;
-const stakingContractAddress = '0x81db5E2dEFA429C47A37F30e7A5EcD4909d25B3a';  // Your staking contract address
+const sepoliaChainId = 11155111;
+const localhostChainId = 31337;
+
+// Contract addresses for different networks
+const contractAddresses = {
+    sepolia: '0x56D2caa1B5E42614764a9F1f71D6DbfFd66487a4',  // Sepolia contract address
+    localhost: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'  // Localhost (Hardhat) contract address
+};
 
 // Function to show notifications at the bottom-right of the screen
 function showNotification(message, type = 'success') {
@@ -39,37 +45,52 @@ function updateConnectionStatus(address = null) {
     }
 }
 
-// Connect to MetaMask and explicitly specify Sepolia network
+// Connect to MetaMask and detect network
 async function connectWallet() {
     if (typeof window.ethereum !== 'undefined') {
         try {
-            provider = new ethers.providers.Web3Provider(window.ethereum, {
-                name: "sepolia",
-                chainId: 11155111  // Sepolia network chain ID
-            });
-
-            await provider.send("eth_requestAccounts", []);
+            // Request account access if needed
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            provider = new ethers.providers.Web3Provider(window.ethereum);
             signer = provider.getSigner();
 
             const address = await signer.getAddress();
             updateConnectionStatus(address);
 
+            // Detect network
             const network = await provider.getNetwork();
-            if (network.chainId !== 11155111) {
-                showNotification('Please connect MetaMask to the Sepolia network.', 'error');
+            console.log(`Connected to network: ${network.chainId}`);
+
+            // Dynamically handle different networks
+            if (network.chainId === sepoliaChainId) {
+                await initializeStakingContract(contractAddresses.sepolia);
+                console.log("Connected to Sepolia network.");
+            } else if (network.chainId === localhostChainId) {
+                await initializeStakingContract(contractAddresses.localhost);
+                console.log("Connected to Localhost (Hardhat) network.");
+            } else {
+                showNotification('Please switch to Sepolia or Localhost (Hardhat).', 'error');
                 return;
             }
 
-            // Load contract ABI and initialize
-            const stakingAbi = await loadStakingABI();
-            stakingContract = new ethers.Contract(stakingContractAddress, stakingAbi, signer);
             updateDashboard();
-
         } catch (error) {
             showNotification('Error connecting wallet: ' + error.message, 'error');
         }
     } else {
         showNotification('MetaMask not found. Please install it to interact with the contract.', 'error');
+    }
+}
+
+// Initialize the staking contract with the correct ABI and address
+async function initializeStakingContract(contractAddress) {
+    try {
+        // Load contract ABI and initialize
+        const stakingAbi = await loadStakingABI();
+        stakingContract = new ethers.Contract(contractAddress, stakingAbi, signer);
+        console.log("Staking contract initialized on address:", contractAddress);
+    } catch (error) {
+        showNotification('Failed to initialize staking contract: ' + error.message, 'error');
     }
 }
 
@@ -100,16 +121,12 @@ async function loadStakingABI() {
         const response = await fetch('./abi/staking_abi.json');
         if (!response.ok) throw new Error(`Failed to fetch staking ABI: ${response.status} ${response.statusText}`);
         const abi = await response.json();
-        console.log("ABI loaded successfully:", abi);  
-
         return abi;
     } catch (error) {
         showNotification('Failed to load staking ABI: ' + error.message, 'error');
         return null;
     }
 }
-
-
 
 // Load the ERC20 ABI for interacting with the staking token
 async function loadERC20ABI() {
@@ -124,7 +141,7 @@ async function loadERC20ABI() {
     }
 }
 
-// Update the stakeTokens function to load ERC20 ABI
+// Stake tokens function
 async function stakeTokens() {
     if (!stakingContract) {
         console.error('Staking contract not defined.');
@@ -185,10 +202,6 @@ async function stakeTokens() {
     }
 }
 
-
-
-
-
 // Withdraw tokens
 async function withdrawTokens() {
     if (!stakingContract) {
@@ -198,7 +211,7 @@ async function withdrawTokens() {
 
     const amountToWithdraw = document.getElementById("withdrawAmount").value;
     if (!amountToWithdraw) {
-        showNotification("Please enter an amount to withdraw.", "error");
+        showNotification("Please enter an amount to withdraw.", 'error');
         return;
     }
     
@@ -229,5 +242,3 @@ async function claimRewards() {
         showNotification(`Error claiming rewards: ${error.message}`, 'error');
     }
 }
-
-
