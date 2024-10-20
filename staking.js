@@ -94,7 +94,37 @@ async function updateDashboard() {
     }
 }
 
-// Staking tokens
+// Load the ABI for the staking contract
+async function loadStakingABI() {
+    try {
+        const response = await fetch('./abi/staking_abi.json');
+        if (!response.ok) throw new Error(`Failed to fetch staking ABI: ${response.status} ${response.statusText}`);
+        const abi = await response.json();
+        console.log("ABI loaded successfully:", abi);  
+
+        return abi;
+    } catch (error) {
+        showNotification('Failed to load staking ABI: ' + error.message, 'error');
+        return null;
+    }
+}
+
+
+
+// Load the ERC20 ABI for interacting with the staking token
+async function loadERC20ABI() {
+    try {
+        const response = await fetch('./abi/erc20_abi.json');
+        if (!response.ok) throw new Error(`Failed to fetch ERC20 ABI: ${response.status} ${response.statusText}`);
+        const abi = await response.json();
+        return abi;
+    } catch (error) {
+        showNotification('Failed to load ERC20 ABI: ' + error.message, 'error');
+        return null;
+    }
+}
+
+// Update the stakeTokens function to load ERC20 ABI
 async function stakeTokens() {
     if (!stakingContract) {
         console.error('Staking contract not defined.');
@@ -113,6 +143,10 @@ async function stakeTokens() {
     try {
         const stakeAmountInWei = ethers.utils.parseUnits(amountToStake, 18);
         console.log("Stake amount in wei:", stakeAmountInWei);
+
+        // Load the ERC20 ABI for staking tokens
+        const erc20ABI = await loadERC20ABI();
+        if (!erc20ABI) return; // Handle ABI loading error
 
         const stakingTokenAddress = await stakingContract.stakingToken();
         console.log("Staking token address:", stakingTokenAddress);
@@ -150,6 +184,7 @@ async function stakeTokens() {
         showNotification(`Error staking tokens: ${error.message}`, 'error');
     }
 }
+
 
 
 
@@ -195,15 +230,4 @@ async function claimRewards() {
     }
 }
 
-// Load the ABI for the staking contract
-async function loadStakingABI() {
-    try {
-        const response = await fetch('./abi/staking_abi.json');
-        if (!response.ok) throw new Error(`Failed to fetch staking ABI: ${response.status} ${response.statusText}`);
-        const abi = await response.json();
-        return abi;
-    } catch (error) {
-        showNotification('Failed to load staking ABI: ' + error.message, 'error');
-        return null;
-    }
-}
+
