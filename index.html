@@ -35,9 +35,9 @@
         </div>
 
         <!-- Dashboard Section -->
-        <div class="glass p-8 mb-8 rounded-lg shadow-lg">
+        <div id="dashboard" class="glass p-8 mb-8 rounded-lg shadow-lg">
             <h2 class="text-3xl mb-4">📊 User Dashboard</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                     <p>Wallet Balance (ETH):</p>
                     <p id="walletBalance" class="font-bold text-2xl">0.0000 ETH</p>
@@ -50,6 +50,10 @@
                     <p>Reward Balance (RWD):</p>
                     <p id="rewardBalance" class="font-bold text-2xl">0.0000 RWD</p>
                 </div>
+                <div>
+                    <p>APY:</p>
+                    <p id="apyValue" class="font-bold text-2xl">0.00%</p>
+                </div>
             </div>
         </div>
 
@@ -58,6 +62,7 @@
             <button id="tabStake" class="tab-active p-3 rounded-lg text-lg font-semibold" onclick="showTab('stake')">Stake</button>
             <button id="tabWithdraw" class="tab-inactive p-3 rounded-lg text-lg font-semibold" onclick="showTab('withdraw')">Withdraw</button>
             <button id="tabRewards" class="tab-inactive p-3 rounded-lg text-lg font-semibold" onclick="showTab('rewards')">Rewards</button>
+            <button id="tabLP" class="tab-inactive p-3 rounded-lg text-lg font-semibold" onclick="showTab('lp')">Stake LP Tokens</button>
         </div>
 
         <!-- Stake Section -->
@@ -88,6 +93,19 @@
             </div>
         </div>
 
+        <!-- LP Stake Section -->
+        <div id="lpSection" class="hidden glass p-8 rounded-lg mb-8">
+            <h2 class="text-3xl mb-4">Stake Your LP Tokens</h2>
+            <div class="flex flex-col md:flex-row items-center">
+                <input type="text" id="lpStakeAmount" placeholder="Amount to stake (in LP tokens)" 
+                    class="flex-1 p-3 bg-transparent border-b border-gray-300 text-white text-xl focus:outline-none mb-4 md:mb-0">
+                <button id="lpStakeButton" onclick="stakeLPTokens()" class="btn-primary text-xl ml-4 px-8 py-4">Stake LP Tokens</button>
+            </div>
+            <div class="flex flex-col md:flex-row items-center mt-4">
+                <button id="claimLPRewardsButton" onclick="claimLPRewards()" class="btn-primary text-xl px-8 py-4">Claim LP Rewards</button>
+            </div>
+        </div>
+
         <!-- Action Notifications (Bottom Right) -->
         <div id="notification" class="notification-bottom-right hidden">
             <span id="notificationMessage"></span>
@@ -97,14 +115,38 @@
 
     <script>
         function showTab(tabName) {
-            const tabs = ['stake', 'withdraw', 'rewards'];
+            console.log(`Switching to tab: ${tabName}`);
+            
+            const tabs = ['stake', 'withdraw', 'rewards', 'lp'];
+            let found = false;
+            
             tabs.forEach(tab => {
-                document.getElementById(`${tab}Section`).classList.add('hidden');
-                document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.remove('tab-active');
-                document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('tab-inactive');
+                const section = document.getElementById(`${tab}Section`);
+                const tabElement = document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
+                
+                if (section && tabElement) {
+                    section.classList.add('hidden');
+                    tabElement.classList.remove('tab-active');
+                    tabElement.classList.add('tab-inactive');
+                }
+                
+                if (tab === tabName) {
+                    found = true;
+                }
             });
-            document.getElementById(`${tabName}Section`).classList.remove('hidden');
-            document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.add('tab-active');
+
+            if (found) {
+                const activeSection = document.getElementById(`${tabName}Section`);
+                const activeTab = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+
+                if (activeSection && activeTab) {
+                    activeSection.classList.remove('hidden');
+                    activeTab.classList.add('tab-active');
+                    activeTab.classList.remove('tab-inactive');
+                }
+            } else {
+                console.error(`Could not find section or tab for ${tabName}`);
+            }
         }
     </script>
 

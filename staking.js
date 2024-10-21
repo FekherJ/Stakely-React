@@ -7,7 +7,7 @@ const localhostChainId = 31337;
 // Contract addresses for different networks
 const contractAddresses = {
     sepolia: '0x56D2caa1B5E42614764a9F1f71D6DbfFd66487a4',
-    localhost: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'
+    localhost: '0x3Aa5ebB10DC797CAC828524e59A333d0A371443c'
 };
 
 // Function to show notifications at the bottom-right of the screen
@@ -38,7 +38,6 @@ function showNotification(message, type = 'success') {
 
 function hideNotification() {
     const notification = document.getElementById("notification");
-    // Hide with smooth transition
     notification.classList.remove("show");
 }
 
@@ -56,7 +55,6 @@ function updateConnectionStatus(address = null) {
 async function connectWallet() {
     if (typeof window.ethereum !== 'undefined') {
         try {
-            // Request account access if needed
             await window.ethereum.request({ method: 'eth_requestAccounts' });
             provider = new ethers.providers.Web3Provider(window.ethereum);
             signer = provider.getSigner();
@@ -64,17 +62,13 @@ async function connectWallet() {
             const address = await signer.getAddress();
             updateConnectionStatus(address);
 
-            // Detect network
             const network = await provider.getNetwork();
             console.log(`Connected to network: ${network.chainId}`);
 
-            // Dynamically handle different networks
             if (network.chainId === sepoliaChainId) {
                 await initializeStakingContract(contractAddresses.sepolia);
-                console.log("Connected to Sepolia network.");
             } else if (network.chainId === localhostChainId) {
                 await initializeStakingContract(contractAddresses.localhost);
-                console.log("Connected to Localhost (Hardhat) network.");
             } else {
                 showNotification('Please switch to Sepolia or Localhost (Hardhat).', 'error');
                 return;
@@ -85,14 +79,12 @@ async function connectWallet() {
             showNotification('Error connecting wallet: ' + error.message, 'error');
         }
     } else {
-        showNotification('MetaMask not found. Please install it to interact with the contract.', 'error');
+        showNotification('MetaMask not found. Please install it.', 'error');
     }
 }
 
-// Initialize the staking contract with the correct ABI and address
 async function initializeStakingContract(contractAddress) {
     try {
-        // Load contract ABI and initialize
         const stakingAbi = await loadStakingABI();
         stakingContract = new ethers.Contract(contractAddress, stakingAbi, signer);
         console.log("Staking contract initialized on address:", contractAddress);
@@ -101,7 +93,7 @@ async function initializeStakingContract(contractAddress) {
     }
 }
 
-// Update dashboard with user's balances
+// Update dashboard with user's balances and APY
 async function updateDashboard() {
     try {
         if (!stakingContract) {
@@ -148,7 +140,7 @@ async function loadERC20ABI() {
     }
 }
 
-// Stake tokens function
+// Stake tokens
 async function stakeTokens() {
     if (!stakingContract) {
         console.error('Staking contract not defined.');
@@ -157,8 +149,6 @@ async function stakeTokens() {
     }
 
     const amountToStake = document.getElementById('stakeAmount').value.trim();
-    console.log("Amount to stake:", amountToStake);
-
     if (!amountToStake || amountToStake === '0') {
         showNotification('Please enter a valid amount to stake.', 'error');
         return;
@@ -166,41 +156,31 @@ async function stakeTokens() {
 
     try {
         const stakeAmountInWei = ethers.utils.parseUnits(amountToStake, 18);
-        console.log("Stake amount in wei:", stakeAmountInWei);
 
-        // Load the ERC20 ABI for staking tokens
         const erc20ABI = await loadERC20ABI();
-        if (!erc20ABI) return; // Handle ABI loading error
+        if (!erc20ABI) return;
 
         const stakingTokenAddress = await stakingContract.stakingToken();
-        console.log("Staking token address:", stakingTokenAddress);
-
         const tokenContract = new ethers.Contract(stakingTokenAddress, erc20ABI, signer);
-        const userBalance = await tokenContract.balanceOf(await signer.getAddress());
-        console.log("User balance:", userBalance.toString());
 
+        const userBalance = await tokenContract.balanceOf(await signer.getAddress());
         if (userBalance.lt(stakeAmountInWei)) {
             showNotification("Insufficient tokens for staking.", "error");
             return;
         }
 
         const allowance = await tokenContract.allowance(await signer.getAddress(), stakingContract.address);
-        console.log("Allowance:", allowance.toString());
-
         if (allowance.lt(stakeAmountInWei)) {
-            console.log("Approving tokens...");
             const approvalTx = await tokenContract.approve(stakingContract.address, stakeAmountInWei);
             await approvalTx.wait();
         }
 
-        console.log("Staking tokens...");
         const tx = await stakingContract.stake(stakeAmountInWei, {
             gasLimit: 2000000,
             maxFeePerGas: ethers.utils.parseUnits('100', 'gwei'),
             maxPriorityFeePerGas: ethers.utils.parseUnits('5', 'gwei')
         });
         await tx.wait();
-        console.log("Tokens staked successfully.");
         showNotification(`Successfully staked ${amountToStake} tokens!`, 'success');
         updateDashboard();
     } catch (error) {
@@ -209,13 +189,53 @@ async function stakeTokens() {
     }
 }
 
-// Withdraw tokens
-async function withdrawTokens() {
+// Stake LP tokens (uses the same STK token contract)
+async function stakeLPTokens() {
     if (!stakingContract) {
         showNotification('Error: stakingContract is undefined. Please connect your wallet.', 'error');
         return;
     }
 
+    const amountToStake = document.getElementById('lpStakeAmount').value.trim();
+    if (!amountToStake || amountToStake === '0') {
+        showNotification('Please enter a valid amount to stake.', 'error');
+        return;
+    }
+
+    try {
+        const stakeAmountInWei = ethers.utils.parseUnits(amountToStake, 18);
+
+        // Reuse the same ERC20 ABI and staking token contract
+        const erc20ABI = await loadERC20ABI();
+        if (!erc20ABI) return;
+
+        const stakingTokenAddress = await stakingContract.stakingToken();
+        const tokenContract = new ethers.Contract(stakingTokenAddress, erc20ABI, signer);
+
+        const userBalance = await tokenContract.balanceOf(await signer.getAddress());
+        if (userBalance.lt(stakeAmountInWei)) {
+            showNotification("Insufficient tokens for staking.", 'error');
+            return;
+        }
+
+        const allowance = await tokenContract.allowance(await signer.getAddress(), stakingContract.address);
+        if (allowance.lt(stakeAmountInWei)) {
+            const approvalTx = await tokenContract.approve(stakingContract.address, stakeAmountInWei);
+            await approvalTx.wait();
+        }
+
+        const tx = await stakingContract.stakeLP(stakeAmountInWei);
+        await tx.wait();
+        showNotification(`Successfully staked ${amountToStake} LP tokens!`, 'success');
+        updateDashboard();
+    } catch (error) {
+        console.error('Error staking LP tokens:', error);
+        showNotification(`Error staking LP tokens: ${error.message}`, 'error');
+    }
+}
+
+// Withdraw tokens
+async function withdrawTokens() {
     const amountToWithdraw = document.getElementById("withdrawAmount").value;
     if (!amountToWithdraw) {
         showNotification("Please enter an amount to withdraw.", 'error');
@@ -233,19 +253,26 @@ async function withdrawTokens() {
     }
 }
 
-// Claim rewards using the staking contract directly
+// Claim rewards
 async function claimRewards() {
-    if (!stakingContract) {
-        showNotification('Error: stakingContract is undefined. Please connect your wallet.', 'error');
-        return;
-    }
-
     try {
-        const tx = await stakingContract.getReward();  // Use the staking contract's getReward() method
+        const tx = await stakingContract.getReward();
         await tx.wait();
         showNotification('Rewards claimed successfully!', 'success');
         updateDashboard();
     } catch (error) {
         showNotification(`Error claiming rewards: ${error.message}`, 'error');
+    }
+}
+
+// Claim LP rewards
+async function claimLPRewards() {
+    try {
+        const tx = await stakingContract.getLPReward();
+        await tx.wait();
+        showNotification('LP Rewards claimed successfully!', 'success');
+        updateDashboard();
+    } catch (error) {
+        showNotification(`Error claiming LP rewards: ${error.message}`, 'error');
     }
 }

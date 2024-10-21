@@ -1,48 +1,89 @@
-/* Background and color */
+/* Body Gradient and Color */
 body {
-    background-color: #0b0e11;
+    background: linear-gradient(135deg, #ff7a00, #ff1d58, #3498db, #1d9bf0, #8e44ad);
+    background-size: 400% 400%;
+    animation: gradientAnimation 15s ease infinite;
     color: #ffffff;
     font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Glass effect and shadows */
+/* Gradient animation */
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Glass Effect with Shadows for Sections */
 .glass {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.35); /* Darker semi-transparent background */
+    backdrop-filter: blur(15px);
     border-radius: 12px;
     padding: 16px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.75); /* Strong shadow for depth */
 }
 
-/* Tabs */
+/* Enhanced User Dashboard Styling */
+#dashboard {
+    background: rgba(255, 255, 255, 0.12); /* Light glass effect for elegance */
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6); /* Deep shadow for a raised effect */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Light border for definition */
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover effect to make the dashboard stand out more */
+#dashboard:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7); /* Stronger shadow on hover */
+    transform: translateY(-5px); /* Slight lift on hover */
+}
+
+/* Tab Styling */
 .tab-active {
-    background-color: #1D9BF0;
+    background-color: rgba(255, 122, 0, 0.85); /* Orange gradient for active tabs */
     color: white;
 }
 
 .tab-inactive {
-    color: #aaa;
-    transition: all 0.2s;
+    background-color: rgba(255, 255, 255, 0.15); /* Semi-transparent inactive tabs */
+    color: #ddd;
+    transition: all 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .tab-inactive:hover {
-    color: #ffffff;
-    transform: scale(1.1);
+    color: #fff;
+    transform: scale(1.05);
+    background-color: rgba(255, 255, 255, 0.25);
 }
 
-/* Buttons */
+/* Buttons with Vibrant Blue Color */
 .btn-primary {
-    background-color: #FF7A00;
+    background-color: #007bff; /* Vibrant blue */
     color: white;
     padding: 12px 24px;
     border-radius: 8px;
     font-weight: bold;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4); /* Button shadow */
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    background-color: #ff5714;
+    transform: translateY(-3px);
+    background-color: #0056b3; /* Darker blue on hover */
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.6); /* Stronger shadow on hover */
 }
 
 /* Notification Styling */
