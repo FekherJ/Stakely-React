@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web3 Staking Platform</title>
+    <title>Stakely</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,17 +17,22 @@
     <!-- Link to external CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center">
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-start">
 
     <!-- Container for the entire application -->
     <div class="container mx-auto p-8 text-center">
         <!-- Header Section -->
-        <h1 class="text-5xl font-bold mb-8">🌌 Web3 Staking Platform</h1>
+        <header class="header flex justify-center items-center space-x-8 mb-12">
+            <!-- Big and Bold 'Stakely' pushed left -->
+            <h1 class="main-title text-9xl font-extrabold mr-4">Stakely</h1>
 
-        <!-- Wallet Connection Status (Top Right) -->
-        <div id="connectionStatus" class="absolute top-0 right-0 mt-4 mr-4 glass p-4 text-sm">
-            Not connected
-        </div>
+            <!-- Vertical 'Stake. Earn. Repeat.' aligned properly -->
+            <div class="slogan text-right flex flex-col items-end space-y-4 text-4xl">
+                <span>Stake.</span>
+                <span>Earn.</span>
+                <span>Repeat.</span>
+            </div>
+        </header>
 
         <!-- Wallet Connection Section -->
         <div class="mb-8">
