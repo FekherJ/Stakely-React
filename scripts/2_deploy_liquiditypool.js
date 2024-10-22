@@ -6,7 +6,7 @@ async function main() {
   console.log("Deploying contracts with the account:", deployer.address);
   
   // Ensure this address is correct from your previous deployments
-  const stakingTokenAddress = "0xf4B146FbA71F41E0592668ffbF264F1D186b2Ca8"; // Replace with actual address
+  const stakingTokenAddress = "0x1c85638e118b37167e9298c2268758e058DdfDA0"; // Replace with actual address
   console.log("Using existing Staking Token Address:", stakingTokenAddress);
   
   // Deploy Liquidity Pool contract with stakingToken address

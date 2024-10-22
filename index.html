@@ -13,6 +13,7 @@
 
     <!-- Custom JavaScript -->
     <script src="staking.js" defer></script>
+    <script src="liquiditypools.js" defer></script>
 
     <!-- Link to external CSS -->
     <link rel="stylesheet" href="styles.css">
@@ -102,7 +103,23 @@
             </div>
         </div>
 
-        <!-- LP Stake Section -->
+        
+    <!-- LP Stake Section -->
+    <!-- LP Stake Section -->
+    <div id="lpSection" class="glass p-8 rounded-lg mb-8">
+        <h2 class="text-3xl mb-4">Liquidity Pool</h2>
+        <div class="flex flex-col md:flex-row items-center">
+            <input type="text" id="lpAmount" placeholder="Amount to deposit/withdraw liquidity (ETH)" 
+                class="flex-1 p-3 bg-transparent border-b border-gray-300 text-white text-xl focus:outline-none mb-4 md:mb-0">
+            <button id="depositLiquidityButton" onclick="depositLiquidity()" class="btn-primary text-xl ml-4 px-8 py-4">Deposit Liquidity</button>
+            <button id="withdrawLiquidityButton" onclick="withdrawLiquidity()" class="btn-primary text-xl ml-4 px-8 py-4">Withdraw Liquidity</button>
+        </div>
+        <div class="flex flex-col md:flex-row items-center mt-4">
+            <button id="claimRewardsButton" onclick="claimRewards()" class="btn-primary text-xl px-8 py-4">Claim Rewards</button>
+        </div>
+    </div>
+
+    
         <div id="lpSection" class="hidden glass p-8 rounded-lg mb-8">
             <h2 class="text-3xl mb-4">Stake Your LP Tokens</h2>
             <div class="flex flex-col md:flex-row items-center">
