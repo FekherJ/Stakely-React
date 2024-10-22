@@ -44,10 +44,14 @@ function hideNotification() {
 // Function to update connection status on the top-right of the screen
 function updateConnectionStatus(address = null) {
     const connectionStatus = document.getElementById("connectionStatus");
-    if (address) {
-        connectionStatus.innerText = `Connected: ${address}`;
+    if (connectionStatus) {
+        if (address) {
+            connectionStatus.innerText = `Connected: ${address}`;
+        } else {
+            connectionStatus.innerText = "Not connected";
+        }
     } else {
-        connectionStatus.innerText = "Not connected";
+        console.error("Connection status element is missing from the DOM.");
     }
 }
 
