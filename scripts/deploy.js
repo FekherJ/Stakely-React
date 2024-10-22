@@ -28,6 +28,12 @@ async function main() {
   await stakingContract.waitForDeployment();
   console.log("Staking Contract deployed to:", await stakingContract.getAddress());
 
+  // *** Deploy the Liquidity Pool contract ***
+  const LiquidityPool = await ethers.getContractFactory("LiquidityPool");
+  const liquidityPool = await LiquidityPool.deploy(stakingToken.getAddress());
+  await liquidityPool.waitForDeployment();
+  console.log("Liquidity Pool Contract deployed to:", await liquidityPool.getAddress());
+
   // Optionally, mint some tokens for testing purposes
   const mintAmount = ethers.parseUnits("1000", 18);
 
@@ -47,12 +53,10 @@ async function main() {
   // *** Verify that the allowance is correctly set ***
   let allowance = await rewardToken.allowance(deployer.address, stakingContract.getAddress());
 
-  
-
   // If allowance is BigInt, handle it as such without conversion
   if (typeof allowance === 'bigint') {
     //console.log("Allowance is a BigInt, treating it directly as BigInt.");
-  } else if (typeof allowance === 'string' || typeof allowance === 'number') {
+  } else if (typeof allowance === 'string' || typeof allowance is 'number') {
     // If it's not a BigInt, convert it to a BigNumber
     allowance = ethers.BigNumber.from(allowance.toString());
   } else {

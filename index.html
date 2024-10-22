@@ -19,11 +19,15 @@
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-start">
 
+    <!-- Connection Status Section -->
+    <div id="connectionStatus" class="absolute top-4 right-4 text-white bg-gray-800 p-4 rounded-lg shadow-lg">
+        Not connected
+    </div>
+
     <!-- Container for the entire application -->
     <div class="container mx-auto p-8 text-center">
         <!-- Header Section -->
         <header class="header flex justify-center items-center space-x-8 mb-12">
-            <!-- Big and Bold 'Stakely' pushed left -->
             <h1 class="main-title text-9xl font-extrabold mr-4">Stakely</h1>
 
             <!-- Vertical 'Stake. Earn. Repeat.' aligned properly -->
@@ -120,40 +124,27 @@
 
     <script>
         function showTab(tabName) {
-            console.log(`Switching to tab: ${tabName}`);
-            
             const tabs = ['stake', 'withdraw', 'rewards', 'lp'];
-            let found = false;
-            
             tabs.forEach(tab => {
                 const section = document.getElementById(`${tab}Section`);
                 const tabElement = document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
-                
+
                 if (section && tabElement) {
                     section.classList.add('hidden');
                     tabElement.classList.remove('tab-active');
                     tabElement.classList.add('tab-inactive');
                 }
-                
-                if (tab === tabName) {
-                    found = true;
-                }
             });
 
-            if (found) {
-                const activeSection = document.getElementById(`${tabName}Section`);
-                const activeTab = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+            const activeSection = document.getElementById(`${tabName}Section`);
+            const activeTab = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
 
-                if (activeSection && activeTab) {
-                    activeSection.classList.remove('hidden');
-                    activeTab.classList.add('tab-active');
-                    activeTab.classList.remove('tab-inactive');
-                }
-            } else {
-                console.error(`Could not find section or tab for ${tabName}`);
+            if (activeSection && activeTab) {
+                activeSection.classList.remove('hidden');
+                activeTab.classList.add('tab-active');
+                activeTab.classList.remove('tab-inactive');
             }
         }
     </script>
-
 </body>
 </html>
