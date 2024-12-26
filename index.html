@@ -72,7 +72,6 @@
             <button id="tabStake" class="tab-active p-3 rounded-lg text-lg font-semibold" onclick="showTab('stake')">Stake</button>
             <button id="tabWithdraw" class="tab-inactive p-3 rounded-lg text-lg font-semibold" onclick="showTab('withdraw')">Withdraw</button>
             <button id="tabRewards" class="tab-inactive p-3 rounded-lg text-lg font-semibold" onclick="showTab('rewards')">Rewards</button>
-            <button id="tabLP" class="tab-inactive p-3 rounded-lg text-lg font-semibold" onclick="showTab('lp')">Stake LP Tokens</button>
         </div>
 
         <!-- Stake Section -->
@@ -95,42 +94,19 @@
             </div>
         </div>
 
-        <!-- Rewards Section -->
-        <div id="rewardsSection" class="hidden glass p-8 rounded-lg mb-8">
-            <h2 class="text-3xl mb-4">Claim Rewards</h2>
-            <div class="flex flex-col md:flex-row items-center">
+        <!-- Claim Rewards Section -->
+        <div id="rewardsSection" class="glass p-8 rounded-lg mb-8">
+            <h2 class="text-3xl mb-4">Claim Your Rewards</h2>
+            <div class="flex flex-col md:flex-row items-center space-x-4">
+                <input type="range" id="rewardSlider" min="0" max="100" value="0" class="slider w-full md:w-1/2" oninput="updateRewardAmount()">
+                <span id="selectedReward" class="text-2xl">0 RWD</span>
                 <button id="claimRewardsButton" onclick="claimRewards()" class="btn-primary text-xl px-8 py-4">Claim Rewards</button>
             </div>
         </div>
 
-        
-    <!-- LP Stake Section -->
-    <!-- LP Stake Section -->
-    <div id="lpSection" class="glass p-8 rounded-lg mb-8">
-        <h2 class="text-3xl mb-4">Liquidity Pool</h2>
-        <div class="flex flex-col md:flex-row items-center">
-            <input type="text" id="lpAmount" placeholder="Amount to deposit/withdraw liquidity (ETH)" 
-                class="flex-1 p-3 bg-transparent border-b border-gray-300 text-white text-xl focus:outline-none mb-4 md:mb-0">
-            <button id="depositLiquidityButton" onclick="depositLiquidity()" class="btn-primary text-xl ml-4 px-8 py-4">Deposit Liquidity</button>
-            <button id="withdrawLiquidityButton" onclick="withdrawLiquidity()" class="btn-primary text-xl ml-4 px-8 py-4">Withdraw Liquidity</button>
-        </div>
-        <div class="flex flex-col md:flex-row items-center mt-4">
-            <button id="claimRewardsButton" onclick="claimRewards()" class="btn-primary text-xl px-8 py-4">Claim Rewards</button>
-        </div>
-    </div>
 
+        
     
-        <div id="lpSection" class="hidden glass p-8 rounded-lg mb-8">
-            <h2 class="text-3xl mb-4">Stake Your LP Tokens</h2>
-            <div class="flex flex-col md:flex-row items-center">
-                <input type="text" id="lpStakeAmount" placeholder="Amount to stake (in LP tokens)" 
-                    class="flex-1 p-3 bg-transparent border-b border-gray-300 text-white text-xl focus:outline-none mb-4 md:mb-0">
-                <button id="lpStakeButton" onclick="stakeLPTokens()" class="btn-primary text-xl ml-4 px-8 py-4">Stake LP Tokens</button>
-            </div>
-            <div class="flex flex-col md:flex-row items-center mt-4">
-                <button id="claimLPRewardsButton" onclick="claimLPRewards()" class="btn-primary text-xl px-8 py-4">Claim LP Rewards</button>
-            </div>
-        </div>
 
         <!-- Action Notifications (Bottom Right) -->
         <div id="notification" class="notification-bottom-right hidden">

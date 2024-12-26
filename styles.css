@@ -1,141 +1,318 @@
-/* Body Gradient and Color */
+/* Minimal Body Gradient and Color */
 body {
-    background: linear-gradient(135deg, #ff7a00, #ff1d58, #3498db, #1d9bf0, #8e44ad);
-    background-size: 400% 400%;
-    animation: gradientAnimation 15s ease infinite;
+    background: linear-gradient(135deg, #ff7a00, #1d9bf0);
     color: #ffffff;
     font-family: 'Poppins', sans-serif;
     min-height: 100vh;
     display: flex;
-    justify-content: start;
+    justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
-/* Move Header halfway to the top */
+/* Reduced Header Spacing */
 .header {
-    margin-top: 10vh; /* Move halfway to the top */
+    margin-top: 5vh;
 }
 
-/* Gradient animation */
-@keyframes gradientAnimation {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
-}
+/* Removed Complex Gradient Animation */
 
-/* Main Title 'Stakely' Styling */
+/* Main Title Styling (Reduced Size, Simpler Shadow) */
 .main-title {
-    font-size: 10rem; /* Very large font size */
+    font-size: 6rem;
     line-height: 1.2;
     text-align: center;
     font-weight: 900;
     color: #ffffff;
-    text-shadow: 6px 6px 12px rgba(0, 123, 255, 0.9), 
-                 -6px -6px 12px rgba(255, 193, 7, 0.9); /* Stronger dual-colored shadow */
-    margin-left: -30px; /* Slight push to the left */
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5); /* Simplified shadow */
+    margin: 0 auto;
 }
 
-/* Stacking 'Stake. Earn. Repeat.' Vertically with More Space */
+/* Slogan Styling (Reduced Font, Lighter Shadow) */
 .slogan {
-    display: flex;
-    flex-direction: column;
-    text-align: right;
+    display: block;
+    text-align: center;
     color: #ffffff;
-    gap: 30px; /* Increased spacing between words */
-    align-items: flex-end; /* Align slogan properly */
+    font-size: 2.5rem;
+    line-height: 1.4;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    margin: 0 auto;
 }
 
-.slogan span {
-    text-shadow: 3px 3px 10px rgba(0, 123, 255, 0.9); /* More pronounced shadow */
-    font-weight: 700;
-    font-size: 4.5rem;
-}
-
-/* Responsive Scaling */
+/* Media Query Adjustments (Simplified) */
 @media (min-width: 768px) {
     .main-title {
-        font-size: 11rem; /* Slightly larger size for tablets and above */
+        font-size: 7rem;
     }
-
-    .slogan span {
-        font-size: 5rem; /* Adjust font size for larger screens */
+    .slogan {
+        font-size: 3rem;
     }
 }
 
 @media (min-width: 1024px) {
     .main-title {
-        font-size: 12rem; /* Maximum size for large screens */
+        font-size: 8rem;
     }
-
-    .slogan span {
-        font-size: 6rem; /* Maximum size for larger screens */
+    .slogan {
+        font-size: 3.5rem;
     }
 }
 
-/* Glass Effect with Shadows for Sections */
+/* Glass Effect (Low Blur and Shadow for Performance) */
 .glass {
-    background: rgba(0, 0, 0, 0.35); /* Darker semi-transparent background */
-    backdrop-filter: blur(15px);
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.75); /* Strong shadow for depth */
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(4px); /* Lowered blur for less GPU usage */
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* Enhanced User Dashboard Styling */
+/* Dashboard with Minimal Shadow and Transition */
 #dashboard {
-    background: rgba(255, 255, 255, 0.12); /* Light glass effect for elegance */
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6); /* Deep shadow for a raised effect */
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Light border for definition */
-    transition: all 0.3s ease-in-out;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); /* Reduced shadow */
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Hover effect to make the dashboard stand out more */
-#dashboard:hover {
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7); /* Stronger shadow on hover */
-    transform: translateY(-5px); /* Slight lift on hover */
-}
-
-/* Tab Styling */
+/* Simplified Tab Styling */
 .tab-active {
-    background-color: rgba(255, 122, 0, 0.85); /* Orange gradient for active tabs */
+    background-color: rgba(255, 122, 0, 0.6);
     color: white;
 }
 
 .tab-inactive {
-    background-color: rgba(255, 255, 255, 0.15); /* Semi-transparent inactive tabs */
+    background-color: rgba(255, 255, 255, 0.05);
     color: #ddd;
-    transition: all 0.3s;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.tab-inactive:hover {
-    color: #fff;
-    transform: scale(1.05);
-    background-color: rgba(255, 255, 255, 0.25);
-}
-
-/* Buttons with Vibrant Blue Color */
+/* Button Styling (No Animation) */
 .btn-primary {
-    background-color: #007bff; /* Vibrant blue */
+    background-color: #007bff;
     color: white;
-    padding: 12px 24px;
-    border-radius: 8px;
+    padding: 10px 20px;
+    border-radius: 6px;
     font-weight: bold;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4); /* Button shadow */
+    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2);
 }
 
-.btn-primary:hover {
-    transform: translateY(-3px);
-    background-color: #0056b3; /* Darker blue on hover */
-    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.6); /* Stronger shadow on hover */
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    background: #ff9900;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity 0.15s ease-in-out;
 }
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #007bff;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #007bff;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 12px; /* Increased height for better user interaction */
+    background: #ff9900;
+    outline: none;
+    opacity: 0.85; /* Slightly higher opacity */
+    transition: opacity 0.15s ease-in-out;
+    cursor: pointer; /* Indicate that the slider is interactive */
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px; /* Increased thumb size */
+    height: 24px;
+    background: #007bff;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: #007bff;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+#swap, #liquidity, #analytics {
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#notification {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border-radius: 5px;
+    z-index: 1000;
+}
+
+.dex-body {
+    background: linear-gradient(135deg, #ff7a00, #1d9bf0);
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dex-container {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    width: 80%;
+    max-width: 1000px;
+    padding: 40px;
+}
+
+.dex-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.dex-card {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.dex-select, .dex-button, input[type="text"] {
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+}
+
+.dex-button {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.dex-button:hover {
+    background-color: #0056b3;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.dex-body {
+    background: linear-gradient(135deg, #ff7a00, #1d9bf0);
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dex-container {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    width: 80%;
+    max-width: 1000px;
+    padding: 40px;
+}
+
+.dex-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.dex-card {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.dex-select, .dex-button, input[type="text"] {
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+}
+
+.dex-button {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.dex-button:hover {
+    background-color: #0056b3;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+
+
+

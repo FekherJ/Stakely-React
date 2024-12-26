@@ -7,7 +7,7 @@ const localhostChainId = 31337;
 // Contract addresses for different networks
 const contractAddresses = {
     sepolia: '0x56D2caa1B5E42614764a9F1f71D6DbfFd66487a4',
-    localhost: '0x3Aa5ebB10DC797CAC828524e59A333d0A371443c'
+    localhost: '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318'
 };
 
 // Function to show notifications at the bottom-right of the screen
@@ -257,26 +257,35 @@ async function withdrawTokens() {
     }
 }
 
-// Claim rewards
+// Function to update the selected reward amount when the slider changes
+function updateRewardAmount() {
+    const rewardSlider = document.getElementById('rewardSlider');
+    const selectedReward = document.getElementById('selectedReward');
+    const maxReward = parseFloat(document.getElementById('rewardBalance').innerText.split(' ')[0]);
+
+    // Update the slider max value to the maximum available rewards
+    rewardSlider.max = maxReward;
+
+    // Update the selected reward display
+    selectedReward.innerText = `${rewardSlider.value} RWD`;
+}
+
+// Update the claim rewards function to use the slider value
 async function claimRewards() {
     try {
-        const tx = await stakingContract.getReward();
+        const rewardAmount = document.getElementById('rewardSlider').value;
+        if (rewardAmount <= 0) {
+            showNotification('Please select a valid reward amount.', 'error');
+            return;
+        }
+
+        const rewardAmountInWei = ethers.utils.parseUnits(rewardAmount.toString(), 18);
+        const tx = await stakingContract.getReward(rewardAmountInWei);
         await tx.wait();
-        showNotification('Rewards claimed successfully!', 'success');
+        showNotification(`Successfully claimed ${rewardAmount} rewards!`, 'success');
         updateDashboard();
     } catch (error) {
         showNotification(`Error claiming rewards: ${error.message}`, 'error');
     }
 }
 
-// Claim LP rewards
-async function claimLPRewards() {
-    try {
-        const tx = await stakingContract.getLPReward();
-        await tx.wait();
-        showNotification('LP Rewards claimed successfully!', 'success');
-        updateDashboard();
-    } catch (error) {
-        showNotification(`Error claiming LP rewards: ${error.message}`, 'error');
-    }
-}

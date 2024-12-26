@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liquidity Pools - Stakely</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Ethers.js -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="liquiditypools.js" defer></script>
+
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-start">
+
+    <!-- Navigation Bar -->
+    <div class="w-full bg-gray-800 p-4 flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-white">Stakely</h1>
+        <div>
+            <a href="index.html" class="btn-secondary mx-2">Home</a>
+            <a href="liquidity.html" class="btn-primary mx-2">Liquidity Pools</a>
+        </div>
+    </div>
+
+    <!-- Connection Status Section -->
+    <div id="connectionStatus" class="absolute top-4 right-4 text-white bg-gray-800 p-4 rounded-lg shadow-lg">
+        Not connected
+    </div>
+
+    <!-- Liquidity Pools Section -->
+    <div class="container mx-auto p-8 text-center">
+        <!-- Header Section -->
+        <header class="header flex justify-center items-center space-x-8 mb-12">
+            <h1 class="main-title text-7xl font-extrabold">Liquidity Pools</h1>
+        </header>
+
+        <!-- Wallet Connection Section -->
+        <div class="mb-8">
+            <button id="connectWalletButton" onclick="connectWallet()" class="btn-primary text-xl px-8 py-4">Connect Wallet</button>
+        </div>
+
+        <!-- Liquidity Pools Dashboard -->
+        <div id="lpDashboard" class="glass p-8 mb-8 rounded-lg shadow-lg">
+            <h2 class="text-3xl mb-4">💧 Liquidity Pool Dashboard</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <p>Wallet Balance (ETH):</p>
+                    <p id="walletBalance" class="font-bold text-2xl">0.0000 ETH</p>
+                </div>
+                <div>
+                    <p>Liquidity Balance (LP Tokens):</p>
+                    <p id="lpBalance" class="font-bold text-2xl">0.0000 LP</p>
+                </div>
+                <div>
+                    <p>Reward Balance (RWD):</p>
+                    <p id="lpRewardBalance" class="font-bold text-2xl">0.0000 RWD</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liquidity Management Section -->
+        <div id="lpManagement" class="glass p-8 rounded-lg mb-8">
+            <h2 class="text-3xl mb-4">Manage Liquidity</h2>
+            <div class="flex flex-col md:flex-row items-center mb-4">
+                <input type="text" id="lpAmount" placeholder="Amount to deposit/withdraw liquidity (ETH)" 
+                    class="flex-1 p-3 bg-transparent border-b border-gray-300 text-white text-xl focus:outline-none mb-4 md:mb-0">
+                <button id="depositLiquidityButton" onclick="depositLiquidity()" class="btn-primary text-xl ml-4 px-8 py-4">Deposit Liquidity</button>
+                <button id="withdrawLiquidityButton" onclick="withdrawLiquidity()" class="btn-secondary text-xl ml-4 px-8 py-4">Withdraw Liquidity</button>
+            </div>
+        </div>
+
+        <!-- Claim Rewards Section -->
+        <div id="claimRewards" class="glass p-8 rounded-lg mb-8">
+            <h2 class="text-3xl mb-4">Claim LP Rewards</h2>
+            <button id="claimLPRewardsButton" onclick="claimLPRewards()" class="btn-primary text-xl px-8 py-4">Claim LP Rewards</button>
+        </div>
+
+        <!-- Action Notifications (Bottom Right) -->
+        <div id="notification" class="notification-bottom-right hidden">
+            <span id="notificationMessage"></span>
+            <button class="close-btn" onclick="hideNotification()">×</button>
+        </div>
+    </div>
+
+    <script>
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById("notification");
+            const notificationMessage = document.getElementById("notificationMessage");
+
+            // Set the message and type (success or error)
+            notificationMessage.innerText = message;
+            notification.classList.remove("hidden");
+
+            if (type === 'success') {
+                notification.classList.add("success");
+                notification.classList.remove("error");
+            } else if (type === 'error') {
+                notification.classList.add("error");
+                notification.classList.remove("success");
+            }
+
+            // Display notification with animation
+            notification.classList.add("show");
+
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                hideNotification();
+            }, 3000);
+        }
+
+        function hideNotification() {
+            const notification = document.getElementById("notification");
+            notification.classList.remove("show");
+        }
+    </script>
+</body>
+</html>

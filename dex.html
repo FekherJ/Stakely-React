@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEX - Trade Tokens</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+    <script src="dex.js" defer></script>
+</head>
+<body class="dex-body">
+    <header>
+        <h1 class="dex-title">Decentralized Exchange</h1>
+        <nav>
+            <a href="index.html">Staking</a>
+            <a href="dex.html">Trade</a>
+        </nav>
+    </header>
+    <main class="dex-container">
+        <section id="swap" class="dex-card">
+            <h2>Swap Tokens</h2>
+            <div class="input-group">
+                <label for="tokenIn">From:</label>
+                <select id="tokenIn" class="dex-select"></select>
+                <input type="text" id="amountIn" placeholder="Amount">
+            </div>
+            <div class="input-group">
+                <label for="tokenOut">To:</label>
+                <select id="tokenOut" class="dex-select"></select>
+                <input type="text" id="amountOut" placeholder="Amount" disabled>
+            </div>
+            <button class="dex-button" onclick="swapTokens()">Swap</button>
+        </section>
+        <section id="liquidity" class="dex-card">
+            <h2>Liquidity Pool</h2>
+            <div class="input-group">
+                <label for="lpToken1">Token 1:</label>
+                <select id="lpToken1" class="dex-select"></select>
+                <input type="text" id="lpAmount1" placeholder="Amount">
+            </div>
+            <div class="input-group">
+                <label for="lpToken2">Token 2:</label>
+                <select id="lpToken2" class="dex-select"></select>
+                <input type="text" id="lpAmount2" placeholder="Amount">
+            </div>
+            <button class="dex-button" onclick="addLiquidity()">Add Liquidity</button>
+            <button class="dex-button" onclick="removeLiquidity()">Remove Liquidity</button>
+        </section>
+        <section id="analytics" class="dex-card">
+            <h2>Price & Volume</h2>
+            <canvas id="priceChart"></canvas>
+        </section>
+        <div id="notification" class="hidden"></div>
+    </main>
+</body>
+</html>

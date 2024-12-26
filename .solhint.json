@@ -1,0 +1,10 @@
+{
+    "extends": "solhint:recommended",
+    "rules": {
+      "max-line-length": ["warn", 120],
+      "function-max-lines": ["error", 50],
+      "indent": ["error", 4],
+      "no-empty-blocks": "off"
+    }
+  }
+  
