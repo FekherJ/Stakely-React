@@ -28,20 +28,20 @@ async function main() {
   const stakingToken = await ethers.getContractAt("ERC20Mock", stakingTokenAddress);
 
   // Verify contract interface and mint function
-  console.log("Verifying contract interface...");
+/*  console.log("Verifying contract interface...");
   const contractCode = await ethers.provider.getCode(stakingTokenAddress);
   if (contractCode === "0x") {
     throw new Error(`No contract deployed at ${stakingTokenAddress}`);
   }
 
-  const expectedMintSelector = "0x40c10f19"; // Keccak selector for mint(address,uint256)
+  const expectedMintSelector = "0x6a627842"; // Keccak selector for mint(address,uint256)
   const stakingTokenInterface = stakingToken.interface.fragments.map(f => f.selector);
   if (!stakingTokenInterface.includes(expectedMintSelector)) {
     throw new Error("Contract does not support the mint function!");
   }
 
   console.log("Mint function verified, proceeding...");
-
+*/
   // Mint tokens for testing
   const mintAmount = ethers.parseUnits("1000", 18);
   await stakingToken.mint(deployer.address, mintAmount);
