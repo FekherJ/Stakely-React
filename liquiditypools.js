@@ -1,5 +1,3 @@
-// liquiditypools.js - JavaScript for Liquidity Pools Management
-
 let provider;
 let signer;
 let liquidityContract;
@@ -66,6 +64,25 @@ async function loadLiquidityABI() {
     }
 }
 
+// Initialize Rewards Slider
+async function initializeSlider() {
+    try {
+        const rewardBalance = await liquidityContract.rewards(await signer.getAddress());
+        const formattedBalance = ethers.utils.formatUnits(rewardBalance, 18);
+
+        // Set slider max based on fetched balance
+        const slider = document.getElementById('rewardSlider');
+        slider.max = parseFloat(formattedBalance) || 0; // Default 0 if invalid
+        slider.value = 0;
+
+        // Update displayed reward
+        document.getElementById('selectedReward').innerText = '0 RWD';
+    } catch (error) {
+        console.error('Error initializing slider:', error);
+    }
+}
+
+
 // Deposit liquidity
 async function depositLiquidity() {
     if (!liquidityContract) {
@@ -91,31 +108,6 @@ async function depositLiquidity() {
     }
 }
 
-// Withdraw liquidity
-async function withdrawLiquidity() {
-    if (!liquidityContract) {
-        showNotification('Error: liquidityContract is undefined. Please connect your wallet.', 'error');
-        return;
-    }
-
-    const amountToWithdraw = document.getElementById('lpAmount').value.trim();
-    if (!amountToWithdraw || amountToWithdraw === '0') {
-        showNotification('Please enter a valid amount to withdraw.', 'error');
-        return;
-    }
-
-    try {
-        const withdrawAmountInWei = ethers.utils.parseUnits(amountToWithdraw, 18);
-        const tx = await liquidityContract.withdraw(withdrawAmountInWei);
-        await tx.wait();
-        showNotification(`Successfully withdrew ${amountToWithdraw} ETH from the liquidity pool!`, 'success');
-        updateLPDashboard();
-    } catch (error) {
-        console.error('Error withdrawing liquidity:', error);
-        showNotification(`Error withdrawing liquidity: ${error.message}`, 'error');
-    }
-}
-
 // Claim LP rewards
 async function claimLPRewards() {
     if (!liquidityContract) {
@@ -124,15 +116,26 @@ async function claimLPRewards() {
     }
 
     try {
-        const tx = await liquidityContract.claimRewards();
+        const rewardAmount = document.getElementById('rewardSlider').value;
+        if (rewardAmount === '0') {
+            showNotification('Please select a valid reward amount to claim.', 'error');
+            return;
+        }
+
+        const amountInWei = ethers.utils.parseUnits(rewardAmount, 18);
+        const tx = await liquidityContract.claimRewards(amountInWei);
         await tx.wait();
-        showNotification('LP Rewards claimed successfully!', 'success');
-        updateLPDashboard();
+        showNotification(`${rewardAmount} RWD claimed successfully!`, 'success');
+
+        // Refresh slider and dashboard
+        await updateLPDashboard();
+        await initializeSlider();
     } catch (error) {
         console.error('Error claiming LP rewards:', error);
         showNotification(`Error claiming LP rewards: ${error.message}`, 'error');
     }
 }
+
 
 // Update the liquidity pool dashboard
 async function updateLPDashboard() {
@@ -149,22 +152,18 @@ async function updateLPDashboard() {
         document.getElementById("lpBalance").innerText = ethers.utils.formatUnits(lpBalance, 18) + " LP";
 
         const rewardBalance = await liquidityContract.rewards(await signer.getAddress());
-        document.getElementById("lpRewardBalance").innerText = ethers.utils.formatUnits(rewardBalance, 18) + " RWD";
+        document.getElementById("rewardBalance").innerText = ethers.utils.formatUnits(rewardBalance, 18) + " RWD";
+
+        initializeSlider();
     } catch (error) {
         showNotification('Error updating liquidity dashboard: ' + error.message, 'error');
     }
 }
 
-// Update connection status on the top-right of the screen
+// Update connection status
 function updateConnectionStatus(address = null) {
     const connectionStatus = document.getElementById("connectionStatus");
     if (connectionStatus) {
-        if (address) {
-            connectionStatus.innerText = `Connected: ${address}`;
-        } else {
-            connectionStatus.innerText = "Not connected";
-        }
-    } else {
-        console.error("Connection status element is missing from the DOM.");
+        connectionStatus.innerText = address ? `Connected: ${address}` : "Not connected";
     }
 }

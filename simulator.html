@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staking Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center">
+    <header class="header text-center mb-8">
+        <h1 class="main-title">Staking Simulator</h1>
+    </header>
+
+    <!-- Simulator Form -->
+    <div class="glass p-8 rounded-lg shadow-lg text-center w-full max-w-md">
+        <h2 class="text-3xl mb-6">Estimate Your Rewards</h2>
+        <div class="space-y-6">
+            <!-- Input for Staking Amount -->
+            <div>
+                <label class="block text-lg">Staking Amount (STK)</label>
+                <input id="amountInput" type="number" placeholder="Enter amount" class="input-field">
+            </div>
+
+            <!-- Input for Staking Duration -->
+            <div>
+                <label class="block text-lg">Staking Duration (Days)</label>
+                <input id="durationInput" type="number" placeholder="Enter duration" class="input-field">
+            </div>
+
+            <!-- Input for APY -->
+            <div>
+                <label class="block text-lg">APY (%)</label>
+                <input id="apyInput" type="number" placeholder="Enter APY" class="input-field">
+            </div>
+
+            <!-- Estimate Button -->
+            <button id="calculateButton" class="btn-primary text-xl px-8 py-4">Calculate Rewards</button>
+
+            <!-- Display Result -->
+            <div id="resultSection" class="text-2xl mt-8 font-bold">
+                Estimated Rewards: 0.0000 RWD
+            </div>
+        </div>
+    </div>
+
+    <script src="simulator.js"></script>
+</body>
+</html>

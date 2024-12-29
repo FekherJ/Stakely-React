@@ -289,3 +289,31 @@ async function claimRewards() {
     }
 }
 
+// Claim LP rewards
+async function claimLPRewards() {
+    if (!liquidityContract) {
+        showNotification('Error: liquidityContract is undefined. Please connect your wallet.', 'error');
+        return;
+    }
+
+    try {
+        const rewardAmount = document.getElementById('rewardSlider').value;
+        if (rewardAmount === '0') {
+            showNotification('Please select a valid reward amount to claim.', 'error');
+            return;
+        }
+
+        const amountInWei = ethers.utils.parseUnits(rewardAmount, 18);
+        const tx = await liquidityContract.claimRewards(amountInWei);
+        await tx.wait();
+        showNotification(`${rewardAmount} RWD claimed successfully!`, 'success');
+
+        // Refresh slider and dashboard
+        await updateLPDashboard();
+        await initializeSlider();
+    } catch (error) {
+        console.error('Error claiming LP rewards:', error);
+        showNotification(`Error claiming LP rewards: ${error.message}`, 'error');
+    }
+}
+

@@ -13,8 +13,7 @@
 
     <!-- Custom JavaScript -->
     <script src="staking.js" defer></script>
-    <script src="liquiditypools.js" defer></script>
-
+    
     <!-- Link to external CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -71,7 +70,6 @@
         <div class="flex justify-center space-x-8 mb-8">
             <button id="tabStake" class="tab-active p-3 rounded-lg text-lg font-semibold" onclick="showTab('stake')">Stake</button>
             <button id="tabWithdraw" class="tab-inactive p-3 rounded-lg text-lg font-semibold" onclick="showTab('withdraw')">Withdraw</button>
-            <button id="tabRewards" class="tab-inactive p-3 rounded-lg text-lg font-semibold" onclick="showTab('rewards')">Rewards</button>
         </div>
 
         <!-- Stake Section -->
@@ -94,50 +92,31 @@
             </div>
         </div>
 
-        <!-- Claim Rewards Section -->
-        <div id="rewardsSection" class="glass p-8 rounded-lg mb-8">
-            <h2 class="text-3xl mb-4">Claim Your Rewards</h2>
+        <!-- Claim LP Rewards Section -->
+        <div id="lpRewardsSection" class="glass p-8 rounded-lg mb-8">
+            <h2 class="text-3xl mb-4">Claim LP Rewards</h2>
             <div class="flex flex-col md:flex-row items-center space-x-4">
-                <input type="range" id="rewardSlider" min="0" max="100" value="0" class="slider w-full md:w-1/2" oninput="updateRewardAmount()">
-                <span id="selectedReward" class="text-2xl">0 RWD</span>
-                <button id="claimRewardsButton" onclick="claimRewards()" class="btn-primary text-xl px-8 py-4">Claim Rewards</button>
+                <input type="range" id="lpRewardSlider" min="0" max="100" value="0" class="slider w-full md:w-1/2" oninput="updateLPRewardAmount()">
+                <span id="selectedLPReward" class="text-2xl">0 RWD</span>
+                <button id="claimLPRewardsButton" onclick="claimLPRewards()" class="btn-primary text-xl px-8 py-4">Claim LP Rewards</button>
             </div>
-        </div>
-
-
-        
-    
-
-        <!-- Action Notifications (Bottom Right) -->
-        <div id="notification" class="notification-bottom-right hidden">
-            <span id="notificationMessage"></span>
-            <button class="close-btn" onclick="hideNotification()">×</button>
         </div>
     </div>
 
     <script>
         function showTab(tabName) {
-            const tabs = ['stake', 'withdraw', 'rewards', 'lp'];
-            tabs.forEach(tab => {
-                const section = document.getElementById(`${tab}Section`);
-                const tabElement = document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
-
-                if (section && tabElement) {
-                    section.classList.add('hidden');
-                    tabElement.classList.remove('tab-active');
-                    tabElement.classList.add('tab-inactive');
-                }
+            const sections = ['stakeSection', 'withdrawSection'];
+            sections.forEach(section => {
+                document.getElementById(section).classList.add('hidden');
             });
-
-            const activeSection = document.getElementById(`${tabName}Section`);
-            const activeTab = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
-
-            if (activeSection && activeTab) {
-                activeSection.classList.remove('hidden');
-                activeTab.classList.add('tab-active');
-                activeTab.classList.remove('tab-inactive');
-            }
+            document.getElementById(`${tabName}Section`).classList.remove('hidden');
         }
+
+        function updateLPRewardAmount() {
+            const sliderValue = document.getElementById('lpRewardSlider').value;
+            document.getElementById('selectedLPReward').innerText = `${sliderValue} RWD`;
+        }
+
     </script>
 </body>
 </html>
