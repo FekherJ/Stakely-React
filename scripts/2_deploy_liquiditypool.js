@@ -25,7 +25,9 @@ async function main() {
   console.log(`Liquidity Pool Address: ${liquidityPoolAddress}`);
 
   // Get instance of deployed staking token with explicit ABI
-  const stakingToken = await ethers.getContractAt("ERC20Mock", stakingTokenAddress);
+  const ERC20Mock = await ethers.getContractFactory("ERC20Mock");
+  const stakingToken = ERC20Mock.attach(stakingTokenAddress);
+
 
   // Verify contract interface and mint function
 /*  console.log("Verifying contract interface...");

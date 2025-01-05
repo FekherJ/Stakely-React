@@ -103,6 +103,7 @@ contract Staking is Ownable, ReentrancyGuard, Pausable {
     // totalSupply function: Returns the total amount of staked tokens in the contract
     function totalSupply() public view returns (uint256) {
         return stakingToken.balanceOf(address(this));
+        
     }
 
     // Pausable functions to allow the owner to pause and unpause the contract in case of emergency

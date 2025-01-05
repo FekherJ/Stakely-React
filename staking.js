@@ -6,8 +6,8 @@ const localhostChainId = 31337;
 
 // Contract addresses for different networks
 const contractAddresses = {
-    sepolia: '0x56D2caa1B5E42614764a9F1f71D6DbfFd66487a4',
-    localhost: '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318'
+    //sepolia: '0x56D2caa1B5E42614764a9F1f71D6DbfFd66487a4',
+    localhost: '0x5FbDB2315678afecb367f032d93F642f64180aa3'
 };
 
 // Function to show notifications at the bottom-right of the screen
@@ -178,12 +178,16 @@ async function stakeTokens() {
             const approvalTx = await tokenContract.approve(stakingContract.address, stakeAmountInWei);
             await approvalTx.wait();
         }
-
+        /* manual gas settings 
         const tx = await stakingContract.stake(stakeAmountInWei, {
             gasLimit: 2000000,
             maxFeePerGas: ethers.utils.parseUnits('100', 'gwei'),
             maxPriorityFeePerGas: ethers.utils.parseUnits('5', 'gwei')
         });
+        */
+
+        const tx = await stakingContract.stake(stakeAmountInWei);
+
         await tx.wait();
         showNotification(`Successfully staked ${amountToStake} tokens!`, 'success');
         updateDashboard();

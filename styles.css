@@ -138,3 +138,241 @@ body {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
+/* Background */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #ffffff;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Header Title */
+h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7);
+}
+
+/* Glass Effect Container */
+.glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Input Fields */
+.input-field {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    font-size: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-field:focus {
+    border-color: #00b4d8;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+/* Button */
+.btn-primary {
+    background: linear-gradient(135deg, #007bff, #00b4d8);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #00b4d8, #007bff);
+    box-shadow: 0 6px 12px rgba(0, 123, 255, 0.5);
+}
+
+/* Results Display */
+#resultSection {
+    margin-top: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #00b4d8;
+}
+
+/* General Body Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #ffffff;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Glass Effect Container */
+.glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Header */
+h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    text-shadow: 2px 4px 10px rgba(0, 0, 0, 0.8);
+}
+
+/* Input Fields */
+.input-field {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.input-field::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.input-field:focus {
+    border-color: #00b4d8;
+    box-shadow: 0 0 12px rgba(0, 180, 216, 0.7);
+}
+
+/* Button */
+.btn-primary {
+    background: linear-gradient(135deg, #007bff, #00b4d8);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #00b4d8, #007bff);
+    box-shadow: 0 10px 20px rgba(0, 123, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+/* Results */
+#resultSection {
+    margin-top: 10px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #38ef7d;
+}
+
+/* Mobile-Friendly */
+@media (max-width: 640px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    .glass {
+        width: 90%;
+    }
+}
+
+/* GENERAL STYLES */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1a2a33, #3b5360, #4e6b82);
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+/* HEADER */
+h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    text-shadow: 3px 3px 15px rgba(0, 0, 0, 0.8);
+}
+
+/* GLASS CONTAINER */
+.glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+/* INPUT FIELDS */
+.input-field {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-field::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.input-field:focus {
+    border-color: #00b4d8;
+    box-shadow: 0 0 15px rgba(0, 180, 216, 0.7);
+}
+
+/* BUTTON */
+.btn-primary {
+    background: linear-gradient(135deg, #007bff, #00b4d8);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #00b4d8, #007bff);
+    box-shadow: 0 12px 25px rgba(0, 123, 255, 0.6);
+    transform: scale(1.05);
+}
+
+/* RESULTS */
+#resultSection {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #38ef7d;
+}
+
+/* RESPONSIVENESS */
+@media (max-width: 640px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    .glass {
+        width: 90%;
+    }
+}
+
+
+

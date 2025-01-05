@@ -6,38 +6,42 @@
     <title>Staking Simulator</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center">
-    <header class="header text-center mb-8">
-        <h1 class="main-title">Staking Simulator</h1>
+<body class="bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center min-h-screen text-white">
+
+    <!-- Header -->
+    <header class="absolute top-8 text-center">
+        <h1 class="text-6xl font-extrabold text-white drop-shadow-xl">Staking Simulator</h1>
     </header>
 
     <!-- Simulator Form -->
-    <div class="glass p-8 rounded-lg shadow-lg text-center w-full max-w-md">
-        <h2 class="text-3xl mb-6">Estimate Your Rewards</h2>
+    <div class="glass p-8 rounded-2xl shadow-2xl w-full max-w-lg mt-20">
+        <h2 class="text-3xl mb-6 font-semibold text-center">Estimate Your Rewards</h2>
+
+        <!-- Inputs -->
         <div class="space-y-6">
-            <!-- Input for Staking Amount -->
+            <!-- Staking Amount -->
             <div>
-                <label class="block text-lg">Staking Amount (STK)</label>
+                <label class="block text-lg mb-2">Staking Amount (STK)</label>
                 <input id="amountInput" type="number" placeholder="Enter amount" class="input-field">
             </div>
 
-            <!-- Input for Staking Duration -->
+            <!-- Staking Duration -->
             <div>
-                <label class="block text-lg">Staking Duration (Days)</label>
+                <label class="block text-lg mb-2">Staking Duration (Days)</label>
                 <input id="durationInput" type="number" placeholder="Enter duration" class="input-field">
             </div>
 
-            <!-- Input for APY -->
+            <!-- APY -->
             <div>
-                <label class="block text-lg">APY (%)</label>
+                <label class="block text-lg mb-2">APY (%)</label>
                 <input id="apyInput" type="number" placeholder="Enter APY" class="input-field">
             </div>
 
-            <!-- Estimate Button -->
-            <button id="calculateButton" class="btn-primary text-xl px-8 py-4">Calculate Rewards</button>
+            <!-- Calculate Button -->
+            <button id="calculateButton" class="btn-primary text-xl py-3 w-full mt-4">Calculate Rewards</button>
 
-            <!-- Display Result -->
-            <div id="resultSection" class="text-2xl mt-8 font-bold">
+            <!-- Result -->
+            <div id="resultSection" class="text-2xl mt-8 font-bold text-green-400 text-center">
                 Estimated Rewards: 0.0000 RWD
             </div>
         </div>
