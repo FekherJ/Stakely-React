@@ -28,8 +28,8 @@ async function main() {
   await stakingContract.waitForDeployment();
   console.log("Staking Contract deployed to:", await stakingContract.getAddress());
 
-  // Optionally, mint some tokens for testing purposes
-  const mintAmount = ethers.parseUnits("1000", 18);
+  // Mint some tokens for testing purposes
+  const mintAmount = ethers.parseUnits("500000", 18);
 
   // Mint staking tokens for the deployer
   await stakingToken.mint(deployer.address, mintAmount);
@@ -40,7 +40,9 @@ async function main() {
   console.log(`Minted ${ethers.formatUnits(mintAmount, 18)} RWD to ${deployer.address}`);
 
   // *** Approve the staking contract to spend reward tokens ***
-  const notifyRewardAmount = ethers.parseUnits("100", 18); // Example reward amount to notify
+  const notifyRewardAmount = ethers.parseUnits("500000", 18); // Sufficient for ~500 blocks
+  //Why 500,000? With rewardRate = 1000 per block: 500,000 / 1000 = 500 blocks worth of rewards.This gives the APY calculation enough data to work with.
+
   await rewardToken.approve(stakingContract.getAddress(), notifyRewardAmount);  // This line is crucial
   console.log(`Approved staking contract to spend ${ethers.formatUnits(notifyRewardAmount, 18)} RWD`);
 
@@ -63,13 +65,10 @@ async function main() {
   console.log(`Allowance for staking contract: ${ethers.formatUnits(allowance, 18)} RWD`);
 
   // *** Directly Compare the Allowance ***
-  if (allowance < notifyRewardAmount) {  // If allowance is less than the notifyRewardAmount
-    console.error("Insufficient allowance for staking contract to transfer reward tokens.");
-  } else {
-    const tx = await stakingContract.notifyRewardAmount(notifyRewardAmount);
-    await tx.wait();
-    console.log(`Notified the staking contract of ${ethers.formatUnits(notifyRewardAmount, 18)} RWD as rewards.`);
-  }
+  // Forcefully set rewards without conditional checks
+  const tx = await stakingContract.notifyRewardAmount(notifyRewardAmount);
+  await tx.wait();
+  console.log(`Forced notification: ${ethers.formatUnits(notifyRewardAmount, 18)} RWD as rewards.`);
 }
 
 main()

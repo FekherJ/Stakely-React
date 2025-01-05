@@ -7,7 +7,7 @@ const localhostChainId = 31337;
 // Contract addresses for different networks
 const contractAddresses = {
     //sepolia: '0x56D2caa1B5E42614764a9F1f71D6DbfFd66487a4',
-    localhost: '0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E'     // Replace this address with the actual staking contract address
+    localhost: '0xA7c59f010700930003b33aB25a7a0679C860f29c'     // Replace this address with the actual staking contract address (logged in 1_deploy_staking.js)
 };
 
 // Function to show notifications at the bottom-right of the screen
@@ -97,7 +97,6 @@ async function initializeStakingContract(contractAddress) {
     }
 }
 
-// Update dashboard with user's balances and APY
 async function updateDashboard() {
     try {
         if (!stakingContract) {
@@ -105,18 +104,44 @@ async function updateDashboard() {
             return;
         }
 
+        // Fetch balances
         const stakingBalance = await stakingContract.balances(await signer.getAddress());
         document.getElementById("stakingBalance").innerText = ethers.utils.formatUnits(stakingBalance, 18) + " STK";
 
-        const rewardBalance = await stakingContract.rewards(await signer.getAddress());
+        const rewardBalance = await stakingContract.earned(await signer.getAddress());
         document.getElementById("rewardBalance").innerText = ethers.utils.formatUnits(rewardBalance, 18) + " RWD";
 
         const walletBalance = await provider.getBalance(await signer.getAddress());
         document.getElementById("walletBalance").innerText = ethers.utils.formatUnits(walletBalance, 18) + " ETH";
+
+        // APY Calculation
+        const rewardRate = await stakingContract.rewardRate();
+        const totalStaked = await stakingContract.totalSupply();
+
+        // Check values
+        console.log("Reward Rate:", ethers.utils.formatUnits(rewardRate, 18));
+        console.log("Total Staked:", ethers.utils.formatUnits(totalStaked, 18));
+
+        if (rewardRate.isZero() || totalStaked.isZero()) {
+            document.getElementById("apyValue").innerText = "0.00%";
+            return;
+        }
+
+        // Approximation for Ethereum blocks per year (15 seconds per block)
+        const blocksPerYear = (365 * 24 * 60 * 60) / 15;
+        const yearlyRewards = rewardRate.mul(blocksPerYear);
+
+        const apy = yearlyRewards.mul(10000).div(totalStaked); // Multiply by 10000 for precision
+
+        // Update APY display
+        document.getElementById("apyValue").innerText = apy.gt(0) ? (apy / 100).toFixed(2) + "%" : "0.01%"; // Show minimum APY
+
     } catch (error) {
         showNotification('Error updating dashboard: ' + error.message, 'error');
     }
 }
+
+
 
 // Load the ABI for the staking contract
 async function loadStakingABI() {
@@ -321,6 +346,37 @@ async function claimRewards() {
         showNotification(`Error claiming rewards: ${error.message}`, 'error');
     }
 }
+
+async function ClaimAllStakingRewards() {
+    try {
+        if (!stakingContract) {
+            showNotification('Staking contract not connected. Please connect your wallet.', 'error');
+            return;
+        }
+
+        // Claim all rewards from the contract
+        const earned = await stakingContract.earned(await signer.getAddress());
+        if (earned.eq(0)) {
+            showNotification('No rewards available to claim.', 'error');
+            return;
+        }
+
+        const tx = await stakingContract.getReward();
+        await tx.wait();
+
+        await tx.wait();
+
+        showNotification('All rewards claimed successfully!', 'success');
+
+        // Update dashboard to reflect changes
+        await updateDashboard();
+    } catch (error) {
+        console.error('Error claiming all rewards:', error);
+        showNotification(`Error claiming rewards: ${error.message}`, 'error');
+    }
+}
+
+
 
 // Claim LP rewards
 async function claimLPRewards() {

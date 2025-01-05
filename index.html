@@ -98,7 +98,11 @@
             <div class="flex flex-col md:flex-row items-center space-x-4">
                 <input type="range" id="StakingRewardSlider" min="0" max="100" value="0" class="slider w-full md:w-1/2" oninput="updateStakingRewardAmount()">
                 <span id="selectedStakingReward" class="text-2xl">0 RWD</span>
-                <button id="claimStakingRewardsButton" onclick="claimStakingRewards()" class="btn-primary text-xl px-8 py-4">Claim Staking Rewards</button>
+                <button id="claimStakingRewardsButton" onclick="claimStakingRewards()" class="btn-primary text-xl px-8 py-4">Claim chosen amount</button>
+
+                <button id="claimAllStakingRewardsButton" onclick="ClaimAllStakingRewards()" class="btn-primary text-xl px-8 py-4 ml-4">Claim All</button>
+
+
             </div>
         </div>
     </div>

@@ -17,7 +17,7 @@ contract Staking is Ownable, ReentrancyGuard, Pausable {
     IERC20 public rewardToken;
 
     // Reward rate per block, defines how many reward tokens are distributed per block
-    uint256 public rewardRate = 1000000;
+    uint256 public rewardRate = 1000;
     // The last block number when rewards were updated
     uint256 public lastUpdateBlock;
     // The accumulated reward per token, stored value to track rewards between updates
