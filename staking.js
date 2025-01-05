@@ -41,6 +41,14 @@ function hideNotification() {
     notification.classList.remove("show");
 }
 
+// Auto-refresh dashboard every 10 seconds
+setInterval(async () => {
+    if (signer && stakingContract) {
+        await updateDashboard();
+    }
+}, 10000); // Updates every 10 seconds
+
+
 // Function to update connection status on the top-right of the screen
 function updateConnectionStatus(address = null) {
     const connectionStatus = document.getElementById("connectionStatus");

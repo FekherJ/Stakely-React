@@ -93,16 +93,16 @@
         </div>
 
         <!-- Claim Staking Rewards Section -->
-        <div id="StakingRewardsSection" class="glass p-8 rounded-lg mb-8">
+        <div id="StakingRewardsSection" class="glass p-10 rounded-lg mb-8">
             <h2 class="text-3xl mb-4">Claim Staking Rewards</h2>
-            <div class="flex flex-col md:flex-row items-center space-x-4">
-                <input type="range" id="StakingRewardSlider" min="0" max="100" value="0" class="slider w-full md:w-1/2" oninput="updateStakingRewardAmount()">
-                <span id="selectedStakingReward" class="text-2xl">0 RWD</span>
-                <button id="claimStakingRewardsButton" onclick="claimStakingRewards()" class="btn-primary text-xl px-8 py-4">Claim chosen amount</button>
-
-                <button id="claimAllStakingRewardsButton" onclick="ClaimAllStakingRewards()" class="btn-primary text-xl px-8 py-4 ml-4">Claim All</button>
-
-
+            <div class="flex flex-col md:flex-row items-center space-x-20">
+                <div>
+                    <label for="percentageSlider" class="text-lg">Select Percentage:</label>
+                    <input type="range" id="percentageSlider" min="10" max="100" step="10" value="10" class="slider w-full md:w-1/2" oninput="updateSelectedPercentage()">
+                    <span id="selectedPercentage" class="text-2xl">10%</span>
+                </div>
+                <button id="claimPercentageButton" onclick="claimPercentageRewards()" class="btn-primary text-xl px-8 py-4">Claim Selected</button>
+                <button id="claimAllButton" onclick="ClaimAllStakingRewards()" class="btn-primary text-xl px-8 py-4 ml-4">Claim All</button>
             </div>
         </div>
     </div>
@@ -112,42 +112,30 @@
             const sections = ['stakeSection', 'withdrawSection'];
             const tabs = ['tabStake', 'tabWithdraw'];
 
-            // Hide all sections
             sections.forEach(section => {
                 document.getElementById(section).classList.add('hidden');
             });
 
-            // Remove 'tab-active' class and add 'tab-inactive' to all tabs
             tabs.forEach(tab => {
                 document.getElementById(tab).classList.remove('tab-active');
                 document.getElementById(tab).classList.add('tab-inactive');
             });
 
-            // Show the selected section
             document.getElementById(`${tabName}Section`).classList.remove('hidden');
-
-            // Highlight the active tab
             document.getElementById(`tab${capitalize(tabName)}`).classList.add('tab-active');
             document.getElementById(`tab${capitalize(tabName)}`).classList.remove('tab-inactive');
         }
 
-        // Helper function to capitalize the first letter
         function capitalize(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
         }
 
-
-        function updateStakingRewardAmount() {
-            const sliderValue = document.getElementById('StakingRewardSlider').value;
-            document.getElementById('selectedStakingReward').innerText = `${sliderValue} RWD`;
+        function updateSelectedPercentage() {
+            const slider = document.getElementById('percentageSlider');
+            const percentage = slider.value;
+            document.getElementById('selectedPercentage').innerText = percentage + "%";
         }
-
     </script>
-
-    <!-- Notification Element -->
-    <div id="notification" class="hidden fixed bottom-4 right-4 bg-gray-800 text-white p-4 rounded-lg shadow-lg">
-        <p id="notificationMessage">Notification Message</p>
-    </div>
 
 </body>
 </html>
