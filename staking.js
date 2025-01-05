@@ -7,7 +7,7 @@ const localhostChainId = 31337;
 // Contract addresses for different networks
 const contractAddresses = {
     //sepolia: '0x56D2caa1B5E42614764a9F1f71D6DbfFd66487a4',
-    localhost: '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+    localhost: '0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E'     // Replace this address with the actual staking contract address
 };
 
 // Function to show notifications at the bottom-right of the screen
@@ -174,9 +174,34 @@ async function stakeTokens() {
         }
 
         const allowance = await tokenContract.allowance(await signer.getAddress(), stakingContract.address);
+
         if (allowance.lt(stakeAmountInWei)) {
+            console.log ("Current allowance amount :", ethers.utils.formatUnits(allowance, 18));
+
+        
+        // Verify Token Address Consistency
+        const stakingTokenAddress = await stakingContract.stakingToken();
+        console.log("Staking Token Address:", stakingTokenAddress);
+
+        const erc20TokenAddress = tokenContract.address;
+        console.log("ERC20 Token Address:", erc20TokenAddress);
+
+        if (stakingTokenAddress !== erc20TokenAddress) {
+            console.error("Token address mismatch! Approving wrong contract.");
+        }
+        // ends here
+
+
+
+
             const approvalTx = await tokenContract.approve(stakingContract.address, stakeAmountInWei);
-            await approvalTx.wait();
+            console.log("Approval transaction sent", approvalTx);
+
+            const receipt = await approvalTx.wait();
+            console.log ("Approval transaction confirmed :", receipt);
+
+            const UpdatedAllowance = await tokenContract.allowance(await signer.getAddress(), stakingContract.address);
+            console.log("Updated Allowance:", ethers.utils.formatUnits(UpdatedAllowance, 18));
         }
         /* manual gas settings 
         const tx = await stakingContract.stake(stakeAmountInWei, {
@@ -219,6 +244,10 @@ async function stakeLPTokens() {
 
         const stakingTokenAddress = await stakingContract.stakingToken();
         const tokenContract = new ethers.Contract(stakingTokenAddress, erc20ABI, signer);
+
+        // Check user token balance
+        const balance = await tokenContract.balanceOf(await signer.getAddress());
+        console.log("Token Balance:", ethers.utils.formatUnits(balance, 18));
 
         const userBalance = await tokenContract.balanceOf(await signer.getAddress());
         if (userBalance.lt(stakeAmountInWei)) {
