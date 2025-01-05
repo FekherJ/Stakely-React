@@ -92,13 +92,13 @@
             </div>
         </div>
 
-        <!-- Claim LP Rewards Section -->
-        <div id="lpRewardsSection" class="glass p-8 rounded-lg mb-8">
-            <h2 class="text-3xl mb-4">Claim LP Rewards</h2>
+        <!-- Claim Staking Rewards Section -->
+        <div id="StakingRewardsSection" class="glass p-8 rounded-lg mb-8">
+            <h2 class="text-3xl mb-4">Claim Staking Rewards</h2>
             <div class="flex flex-col md:flex-row items-center space-x-4">
-                <input type="range" id="lpRewardSlider" min="0" max="100" value="0" class="slider w-full md:w-1/2" oninput="updateLPRewardAmount()">
-                <span id="selectedLPReward" class="text-2xl">0 RWD</span>
-                <button id="claimLPRewardsButton" onclick="claimLPRewards()" class="btn-primary text-xl px-8 py-4">Claim LP Rewards</button>
+                <input type="range" id="StakingRewardSlider" min="0" max="100" value="0" class="slider w-full md:w-1/2" oninput="updateStakingRewardAmount()">
+                <span id="selectedStakingReward" class="text-2xl">0 RWD</span>
+                <button id="claimStakingRewardsButton" onclick="claimStakingRewards()" class="btn-primary text-xl px-8 py-4">Claim Staking Rewards</button>
             </div>
         </div>
     </div>
@@ -106,15 +106,36 @@
     <script>
         function showTab(tabName) {
             const sections = ['stakeSection', 'withdrawSection'];
+            const tabs = ['tabStake', 'tabWithdraw'];
+
+            // Hide all sections
             sections.forEach(section => {
                 document.getElementById(section).classList.add('hidden');
             });
+
+            // Remove 'tab-active' class and add 'tab-inactive' to all tabs
+            tabs.forEach(tab => {
+                document.getElementById(tab).classList.remove('tab-active');
+                document.getElementById(tab).classList.add('tab-inactive');
+            });
+
+            // Show the selected section
             document.getElementById(`${tabName}Section`).classList.remove('hidden');
+
+            // Highlight the active tab
+            document.getElementById(`tab${capitalize(tabName)}`).classList.add('tab-active');
+            document.getElementById(`tab${capitalize(tabName)}`).classList.remove('tab-inactive');
         }
 
-        function updateLPRewardAmount() {
-            const sliderValue = document.getElementById('lpRewardSlider').value;
-            document.getElementById('selectedLPReward').innerText = `${sliderValue} RWD`;
+        // Helper function to capitalize the first letter
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+
+        function updateStakingRewardAmount() {
+            const sliderValue = document.getElementById('StakingRewardSlider').value;
+            document.getElementById('selectedStakingReward').innerText = `${sliderValue} RWD`;
         }
 
     </script>
