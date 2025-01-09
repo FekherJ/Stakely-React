@@ -7,7 +7,8 @@ const localhostChainId = 31337;
 // Contract addresses for different networks
 const contractAddresses = {
     //sepolia: '0x56D2caa1B5E42614764a9F1f71D6DbfFd66487a4',
-    localhost: '0xA7c59f010700930003b33aB25a7a0679C860f29c'     // Replace this address with the actual staking contract address (logged in 1_deploy_staking.js)
+    localhost: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'    // Replace this address with the actual staking contract address (logged in 1_deploy_staking.js)
+    // don't forget to load the abi json :  cp artifacts/contracts/Staking.sol/Staking.json abi/staking_abi.json
 };
 
 // Function to show notifications at the bottom-right of the screen
@@ -97,13 +98,34 @@ async function connectWallet() {
 
 async function initializeStakingContract(contractAddress) {
     try {
-        const stakingAbi = await loadStakingABI();
+        const stakingAbiJson = await loadStakingABI();
+        
+        if (!stakingAbiJson) {
+            throw new Error('Failed to load ABI JSON.');
+        }
+
+        const stakingAbi = stakingAbiJson.abi;
+        if (!Array.isArray(stakingAbi)) {
+            throw new Error('ABI is not a valid array.');
+        }
+
+        if (!signer) {
+            throw new Error('Signer is not initialized. Connect the wallet first.');
+        }
+
+        console.log("Loading ABI:", stakingAbi); // Debug ABI
+        console.log("Using Address:", contractAddress); // Debug address
+
         stakingContract = new ethers.Contract(contractAddress, stakingAbi, signer);
         console.log("Staking contract initialized on address:", contractAddress);
+
+        return stakingContract; // Return the instance if needed
     } catch (error) {
+        console.error('Failed to initialize staking contract:', error);
         showNotification('Failed to initialize staking contract: ' + error.message, 'error');
     }
 }
+
 
 async function updateDashboard() {
     try {
@@ -119,7 +141,7 @@ async function updateDashboard() {
         const rewardBalance = await stakingContract.earned(await signer.getAddress());
         document.getElementById("rewardBalance").innerText = ethers.utils.formatUnits(rewardBalance, 18) + " RWD";
 
-        const walletBalance = await provider.getBalance(await signer.getAddress());
+        const walletBalance = await provider.getBalance(await signer.getAddress(), "latest");
         document.getElementById("walletBalance").innerText = ethers.utils.formatUnits(walletBalance, 18) + " ETH";
 
         // APY Calculation
@@ -194,66 +216,72 @@ async function stakeTokens() {
     try {
         const stakeAmountInWei = ethers.utils.parseUnits(amountToStake, 18);
 
+        // Load the ERC20 ABI
         const erc20ABI = await loadERC20ABI();
-        if (!erc20ABI) return;
+        if (!erc20ABI) {
+            showNotification('Failed to load ERC20 ABI.', 'error');
+            return;
+        }
 
         const stakingTokenAddress = await stakingContract.stakingToken();
         const tokenContract = new ethers.Contract(stakingTokenAddress, erc20ABI, signer);
 
+        // Check user token balance
         const userBalance = await tokenContract.balanceOf(await signer.getAddress());
+        console.log("User Balance:", ethers.utils.formatUnits(userBalance, 18));
         if (userBalance.lt(stakeAmountInWei)) {
-            showNotification("Insufficient tokens for staking.", "error");
+            showNotification("Insufficient tokens for staking.", 'error');
             return;
         }
 
-        const allowance = await tokenContract.allowance(await signer.getAddress(), stakingContract.address);
+        // Check the allowance
+        let allowance = await tokenContract.allowance(await signer.getAddress(), stakingContract.address);
+        console.log("Current Allowance:", ethers.utils.formatUnits(allowance, 18));
 
         if (allowance.lt(stakeAmountInWei)) {
-            console.log ("Current allowance amount :", ethers.utils.formatUnits(allowance, 18));
-
-        
-        // Verify Token Address Consistency
-        const stakingTokenAddress = await stakingContract.stakingToken();
-        console.log("Staking Token Address:", stakingTokenAddress);
-
-        const erc20TokenAddress = tokenContract.address;
-        console.log("ERC20 Token Address:", erc20TokenAddress);
-
-        if (stakingTokenAddress !== erc20TokenAddress) {
-            console.error("Token address mismatch! Approving wrong contract.");
+            try {
+                const approvalTx = await tokenContract.approve(stakingContract.address, stakeAmountInWei);
+                await approvalTx.wait();
+                console.log("Approval confirmed.");
+            } catch (error) {
+                console.error("Approval failed:", error);
+                showNotification(`Approval error: ${error.message}`, 'error');
+                return;
+            }
         }
-        // ends here
 
-
-
-
-            const approvalTx = await tokenContract.approve(stakingContract.address, stakeAmountInWei);
-            console.log("Approval transaction sent", approvalTx);
-
-            const receipt = await approvalTx.wait();
-            console.log ("Approval transaction confirmed :", receipt);
-
-            const UpdatedAllowance = await tokenContract.allowance(await signer.getAddress(), stakingContract.address);
-            console.log("Updated Allowance:", ethers.utils.formatUnits(UpdatedAllowance, 18));
+        // Validate the stake with callStatic
+        try {
+            await stakingContract.callStatic.stake(stakeAmountInWei);
+            console.log("Stake callStatic succeeded.");
+        } catch (error) {
+            console.error("Stake callStatic failed:", error);
+            showNotification(`Stake error: ${error.message}`, 'error');
+            return;
         }
-        /* manual gas settings 
+
+        // Estimate gas and execute the stake
+        const gasEstimate = await stakingContract.estimateGas.stake(stakeAmountInWei);
+        console.log("Gas Estimate:", gasEstimate.toString());
+
         const tx = await stakingContract.stake(stakeAmountInWei, {
-            gasLimit: 2000000,
-            maxFeePerGas: ethers.utils.parseUnits('100', 'gwei'),
-            maxPriorityFeePerGas: ethers.utils.parseUnits('5', 'gwei')
+            gasLimit: gasEstimate.add(50000),
         });
-        */
-
-        const tx = await stakingContract.stake(stakeAmountInWei);
-
         await tx.wait();
         showNotification(`Successfully staked ${amountToStake} tokens!`, 'success');
         updateDashboard();
     } catch (error) {
-        console.error('Error staking tokens:', error);
+        console.error('Error during staking process:', error);
         showNotification(`Error staking tokens: ${error.message}`, 'error');
     }
 }
+
+
+
+
+
+
+
 
 // Stake LP tokens (uses the same STK token contract)
 async function stakeLPTokens() {
@@ -292,6 +320,7 @@ async function stakeLPTokens() {
         if (allowance.lt(stakeAmountInWei)) {
             const approvalTx = await tokenContract.approve(stakingContract.address, stakeAmountInWei);
             await approvalTx.wait();
+            console.log("Updated Allowance:", ethers.utils.formatUnits(await tokenContract.allowance(await signer.getAddress(), stakingContract.address), 18));
         }
 
         const tx = await stakingContract.stakeLP(stakeAmountInWei);
@@ -383,6 +412,29 @@ async function ClaimAllStakingRewards() {
         showNotification(`Error claiming rewards: ${error.message}`, 'error');
     }
 }
+
+function updateSelectedPercentage() {
+    const slider = document.getElementById('percentageSlider');
+    const percentage = slider.value;
+
+    // Update the displayed percentage
+    document.getElementById('selectedPercentage').innerText = percentage + "%";
+
+    // Ensure gradient only covers up to the thumb
+    const fillPercentage = (percentage - slider.min) / (slider.max - slider.min) * 100;
+    slider.style.background = `linear-gradient(to right, #00b4d8 ${fillPercentage}%, #ccc ${fillPercentage}%)`;
+}
+
+
+// Initialize slider style on load
+window.onload = () => {
+    const slider = document.getElementById('percentageSlider');
+    slider.style.background = `linear-gradient(to right, #00b4d8 0%, #ccc 0%)`;
+    slider.value = 10;
+    updateSelectedPercentage();
+};
+
+
 
 
 

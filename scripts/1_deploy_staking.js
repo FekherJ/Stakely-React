@@ -29,7 +29,8 @@ async function main() {
   console.log("Staking Contract deployed to:", await stakingContract.getAddress());
 
   // Mint some tokens for testing purposes
-  const mintAmount = ethers.parseUnits("500000", 18);
+  const mintAmount = ethers.parseUnits("10000000", 18);
+
 
   // Mint staking tokens for the deployer
   await stakingToken.mint(deployer.address, mintAmount);
@@ -39,15 +40,22 @@ async function main() {
   await rewardToken.mint(deployer.address, mintAmount);
   console.log(`Minted ${ethers.formatUnits(mintAmount, 18)} RWD to ${deployer.address}`);
 
+  // *** NEW: Transfer some RWD to the connected wallet for frontend testing ***
+  const transferAmount = ethers.parseUnits("1000000", 18); // 1,000,000 RWD
+  await rewardToken.transfer(deployer.address, transferAmount);
+  console.log(`Transferred ${ethers.formatUnits(transferAmount, 18)} RWD to ${deployer.address}`);
+
+
   // *** Approve the staking contract to spend reward tokens ***
-  const notifyRewardAmount = ethers.parseUnits("500000", 18); // Sufficient for ~500 blocks
+  const notifyRewardAmount = ethers.parseUnits("10000000", 18); // Sufficient for ~500 blocks
   //Why 500,000? With rewardRate = 1000 per block: 500,000 / 1000 = 500 blocks worth of rewards.This gives the APY calculation enough data to work with.
 
   await rewardToken.approve(stakingContract.getAddress(), notifyRewardAmount);  // This line is crucial
   console.log(`Approved staking contract to spend ${ethers.formatUnits(notifyRewardAmount, 18)} RWD`);
 
   // *** Verify that the allowance is correctly set ***
-  let allowance = await rewardToken.allowance(deployer.address, stakingContract.getAddress());
+  const allowance = await rewardToken.allowance(deployer.address, stakingContract.getAddress());
+  console.log(`Allowance after approval: ${ethers.formatUnits(allowance, 18)}`);
 
   
 

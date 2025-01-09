@@ -96,16 +96,28 @@
         <div id="StakingRewardsSection" class="glass p-10 rounded-lg mb-8">
             <h2 class="text-3xl mb-4">Claim Staking Rewards</h2>
             <div class="flex flex-col md:flex-row items-center space-x-20">
-                <div>
-                    <label for="percentageSlider" class="text-lg">Select Percentage:</label>
-                    <input type="range" id="percentageSlider" min="10" max="100" step="10" value="10" class="slider w-full md:w-1/2" oninput="updateSelectedPercentage()">
+                <div class="slider-container">
+                    <label for="percentageSlider" class="text-lg">Amount to claim :</label>
+                    <input type="range" id="percentageSlider" min="10" max="100" step="10" value="10" 
+                        class="modern-slider" oninput="updateSelectedPercentage()">
                     <span id="selectedPercentage" class="text-2xl">10%</span>
                 </div>
-                <button id="claimPercentageButton" onclick="claimPercentageRewards()" class="btn-primary text-xl px-8 py-4">Claim Selected</button>
-                <button id="claimAllButton" onclick="ClaimAllStakingRewards()" class="btn-primary text-xl px-8 py-4 ml-4">Claim All</button>
+                <button id="claimPercentageButton" onclick="claimPercentageRewards()" class="btn-primary text-xl px-8 py-4">
+                    Claim Selected
+                </button>
+                <button id="claimAllButton" onclick="ClaimAllStakingRewards()" class="btn-primary text-xl px-8 py-4 ml-4">
+                    Claim All
+                </button>
             </div>
         </div>
+        
     </div>
+
+    <!-- Notification Container -->
+<div id="notification" class="hidden fixed bottom-4 right-4 bg-gray-800 text-white p-4 rounded-lg shadow-lg">
+    <span id="notificationMessage"></span>
+</div>
+
 
     <script>
         function showTab(tabName) {
@@ -130,11 +142,7 @@
             return str.charAt(0).toUpperCase() + str.slice(1);
         }
 
-        function updateSelectedPercentage() {
-            const slider = document.getElementById('percentageSlider');
-            const percentage = slider.value;
-            document.getElementById('selectedPercentage').innerText = percentage + "%";
-        }
+        
     </script>
 
 </body>
