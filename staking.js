@@ -7,7 +7,7 @@ const localhostChainId = 31337;
 // Contract addresses for different networks
 const contractAddresses = {
     //sepolia: '0x56D2caa1B5E42614764a9F1f71D6DbfFd66487a4',
-    localhost: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'    // Replace this address with the actual staking contract address (logged in 1_deploy_staking.js)
+    localhost: '0x09635F643e140090A9A8Dcd712eD6285858ceBef'    // Replace this address with the actual staking contract address (logged in 1_deploy_staking.js)
     // don't forget to load the abi json :  cp artifacts/contracts/Staking.sol/Staking.json abi/staking_abi.json
 };
 
@@ -46,6 +46,7 @@ function hideNotification() {
 setInterval(async () => {
     if (signer && stakingContract) {
         await updateDashboard();
+        //await updateTransactionHistory();
     }
 }, 10000); // Updates every 10 seconds
 
@@ -88,6 +89,7 @@ async function connectWallet() {
             }
 
             updateDashboard();
+            await updateTransactionHistory();
         } catch (error) {
             showNotification('Error connecting wallet: ' + error.message, 'error');
         }
@@ -270,12 +272,72 @@ async function stakeTokens() {
         await tx.wait();
         showNotification(`Successfully staked ${amountToStake} tokens!`, 'success');
         updateDashboard();
+        await updateTransactionHistory();
     } catch (error) {
         console.error('Error during staking process:', error);
         showNotification(`Error staking tokens: ${error.message}`, 'error');
     }
 }
 
+
+
+async function fetchTransactionHistory() {
+    if (!stakingContract) {
+        console.error('Staking contract not connected.');
+        return [];
+    }
+
+    const address = await signer.getAddress();
+    console.log("Available filters:", stakingContract.filters);
+
+    // Fetch events
+    const stakeEvents = await stakingContract.queryFilter(stakingContract.filters.Staked(address));
+    const withdrawEvents = await stakingContract.queryFilter(stakingContract.filters.Withdrawn(address));
+    const rewardEvents = await stakingContract.queryFilter(stakingContract.filters.RewardPaid(address));
+
+    const history = [...stakeEvents, ...withdrawEvents, ...rewardEvents];
+    history.sort((a, b) => a.blockNumber - b.blockNumber);
+
+    // Parse data
+    const parsedHistory = await Promise.all(
+        history.map(async (event) => {
+            const { args, event: eventType, blockNumber } = event;
+            if (!args.amount) {
+                console.warn(`Event ${eventType} has no amount field.`);
+                return null; // Skip invalid events
+            }
+
+            const block = await provider.getBlock(blockNumber);
+            return {
+                type: eventType,
+                amount: ethers.utils.formatUnits(args.amount, 18),
+                timestamp: new Date(block.timestamp * 1000).toLocaleString(),
+            };
+        })
+    );
+
+    return parsedHistory.filter((entry) => entry !== null); // Remove invalid entries
+}
+
+
+
+
+async function updateTransactionHistory() {
+    const tableBody = document.getElementById('transactionHistoryTable');
+    tableBody.innerHTML = ''; // Clear the table
+
+    const history = await fetchTransactionHistory();
+
+    history.forEach((entry) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${entry.type}</td>
+            <td>${entry.amount}</td>
+            <td>${entry.timestamp}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
 
 
 
@@ -327,6 +389,7 @@ async function stakeLPTokens() {
         await tx.wait();
         showNotification(`Successfully staked ${amountToStake} LP tokens!`, 'success');
         updateDashboard();
+        await updateTransactionHistory();
     } catch (error) {
         console.error('Error staking LP tokens:', error);
         showNotification(`Error staking LP tokens: ${error.message}`, 'error');
@@ -347,6 +410,7 @@ async function withdrawTokens() {
         await tx.wait();
         showNotification('Tokens withdrawn successfully!', 'success');
         updateDashboard();
+        await updateTransactionHistory();
     } catch (error) {
         showNotification(`Error withdrawing tokens: ${error.message}`, 'error');
     }
@@ -358,8 +422,12 @@ function updateRewardAmount() {
     const selectedReward = document.getElementById('selectedReward');
     const maxReward = parseFloat(document.getElementById('rewardBalance').innerText.split(' ')[0]);
 
-    // Update the slider max value to the maximum available rewards
-    rewardSlider.max = maxReward;
+    if (!isNaN(maxReward) && maxReward > 0) {
+        rewardSlider.max = maxReward; // Set slider maximum
+        rewardSlider.value = Math.min(rewardSlider.value, maxReward); // Ensure slider value is within bounds
+    } else {
+        rewardSlider.value = 0; // Default to 0 if maxReward is invalid
+    }
 
     // Update the selected reward display
     selectedReward.innerText = `${rewardSlider.value} RWD`;
@@ -368,21 +436,36 @@ function updateRewardAmount() {
 // Update the claim rewards function to use the slider value
 async function claimRewards() {
     try {
-        const rewardAmount = document.getElementById('rewardSlider').value;
-        if (rewardAmount <= 0) {
-            showNotification('Please select a valid reward amount.', 'error');
+        if (!stakingContract) {
+            showNotification('Staking contract not connected. Please connect your wallet.', 'error');
             return;
         }
 
-        const rewardAmountInWei = ethers.utils.parseUnits(rewardAmount.toString(), 18);
-        const tx = await stakingContract.getReward(rewardAmountInWei);
+        // Fetch the user's reward balance
+        const rewardBalance = await stakingContract.earned(await signer.getAddress());
+        if (rewardBalance.isZero()) {
+            showNotification('No rewards available to claim.', 'error');
+            return;
+        }
+
+        console.log("Claiming rewards:", ethers.utils.formatUnits(rewardBalance, 18), "RWD");
+
+        // Claim all rewards
+        const tx = await stakingContract.getReward();
         await tx.wait();
-        showNotification(`Successfully claimed ${rewardAmount} rewards!`, 'success');
-        updateDashboard();
+
+        showNotification(`Successfully claimed ${ethers.utils.formatUnits(rewardBalance, 18)} rewards!`, 'success');
+
+        // Update the dashboard and transaction history
+        await updateDashboard();
+        await updateTransactionHistory();
     } catch (error) {
+        console.error('Error claiming rewards:', error);
         showNotification(`Error claiming rewards: ${error.message}`, 'error');
     }
 }
+
+
 
 async function ClaimAllStakingRewards() {
     try {
@@ -407,6 +490,7 @@ async function ClaimAllStakingRewards() {
 
         // Update dashboard to reflect changes
         await updateDashboard();
+        await updateTransactionHistory();
     } catch (error) {
         console.error('Error claiming all rewards:', error);
         showNotification(`Error claiming rewards: ${error.message}`, 'error');
@@ -436,8 +520,6 @@ window.onload = () => {
 
 
 
-
-
 // Claim LP rewards
 async function claimLPRewards() {
     if (!liquidityContract) {
@@ -459,6 +541,7 @@ async function claimLPRewards() {
 
         // Refresh slider and dashboard
         await updateLPDashboard();
+        await updateTransactionHistory();
         await initializeSlider();
     } catch (error) {
         console.error('Error claiming LP rewards:', error);

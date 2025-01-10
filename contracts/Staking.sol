@@ -31,10 +31,10 @@ contract Staking is Ownable, ReentrancyGuard, Pausable {
     mapping(address => uint256) public balances;
 
     // Events to log actions like staking, withdrawing, reward payment, and reward compounding
-    event Staked(address indexed user, uint256 amount);
-    event Withdrawn(address indexed user, uint256 amount);
-    event RewardPaid(address indexed user, uint256 reward);
-    event Compounded(address indexed user, uint256 reward);
+    event Staked(address indexed user, uint256 amount, uint256 timestamp);
+    event Withdrawn(address indexed user, uint256 amount, uint256 timestamp);
+    event RewardPaid(address indexed user, uint256 reward, uint256 timestamp);
+    event Compounded(address indexed user, uint256 reward, uint256 timestamp);
     event RewardAdded(uint256 rewardAmount);   // New event to log when new rewards are added
 
     // Constructor initializes the staking and reward tokens with the provided addresses
@@ -48,7 +48,7 @@ contract Staking is Ownable, ReentrancyGuard, Pausable {
         require(amount > 0, "Cannot stake 0");
         balances[msg.sender] += amount;
         require(stakingToken.transferFrom(msg.sender, address(this), amount), "Stake transfer failed");
-        emit Staked(msg.sender, amount);
+        emit Staked(msg.sender, amount, block.timestamp);
     }
 
     // Withdraw function: Allows users to withdraw staked tokens
@@ -57,7 +57,7 @@ contract Staking is Ownable, ReentrancyGuard, Pausable {
         require(balances[msg.sender] >= amount, "Insufficient balance");
         balances[msg.sender] -= amount;
         require(stakingToken.transfer(msg.sender, amount), "Withdraw transfer failed");
-        emit Withdrawn(msg.sender, amount);
+        emit Withdrawn(msg.sender, amount, block.timestamp);
     }
 
     // getReward function: Allows users to claim their earned rewards
@@ -66,7 +66,7 @@ contract Staking is Ownable, ReentrancyGuard, Pausable {
         require(reward > 0, "No reward available");
         rewards[msg.sender] = 0;
         require(rewardToken.transfer(msg.sender, reward), "Reward transfer failed");
-        emit RewardPaid(msg.sender, reward);
+        emit RewardPaid(msg.sender, reward, block.timestamp);
     }
 
     // compoundRewards function: Allows users to automatically stake their rewards into the staking pool
@@ -75,7 +75,7 @@ contract Staking is Ownable, ReentrancyGuard, Pausable {
         require(reward > 0, "No reward available to compound");
         rewards[msg.sender] = 0;
         balances[msg.sender] += reward;
-        emit Compounded(msg.sender, reward);
+        emit Compounded(msg.sender, reward, block.timestamp);
     }
 
     // updateReward modifier: Updates the user's reward information before executing any staking, withdrawal, or reward claim action
