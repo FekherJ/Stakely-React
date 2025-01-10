@@ -330,14 +330,26 @@ async function updateTransactionHistory() {
 
     history.forEach((entry) => {
         const row = document.createElement('tr');
+        let typeIcon = '';
+
+        // Add icons based on transaction type
+        if (entry.type === 'Staked') {
+            typeIcon = '📥'; // Icon for staking
+        } else if (entry.type === 'Withdrawn') {
+            typeIcon = '📤'; // Icon for withdrawal
+        } else if (entry.type === 'RewardPaid') {
+            typeIcon = '🎁'; // Icon for rewards
+        }
+
         row.innerHTML = `
-            <td>${entry.type}</td>
-            <td>${entry.amount}</td>
-            <td>${entry.timestamp}</td>
+            <td class="py-2 px-4">${typeIcon} ${entry.type}</td>
+            <td class="py-2 px-4">${entry.amount} STK</td>
+            <td class="py-2 px-4">${entry.timestamp}</td>
         `;
         tableBody.appendChild(row);
     });
 }
+
 
 
 

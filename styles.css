@@ -1,14 +1,16 @@
 /* Modern Dark Gradient and Glassmorphism Effect */
 body {
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* Dark modern gradient */
-    color: #ffffff;
     font-family: 'Poppins', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+    background: linear-gradient(135deg, #1a2a33, #3b5360, #4e6b82);
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    height: auto; /* Allow body to grow based on content */
+    min-height: 100vh; /* Allow body height to grow based on content */
+    overflow-x: hidden;
+    overflow-y: visible; /* Ensure vertical scrolling */
 }
+
 
 /* Updated Header Spacing */
 .header {
@@ -420,6 +422,149 @@ h1 {
 .modern-slider::-moz-range-thumb:hover {
     transform: scale(1.2);
 }
+
+/* Transaction History Table */
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.transaction-table thead th {
+    background: rgba(255, 255, 255, 0.2);
+    text-align: left;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.transaction-table tbody tr {
+    transition: background 0.3s;
+}
+
+.transaction-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.transaction-table tbody td {
+    padding: 12px;
+    font-size: 0.875rem;
+    color: #dddddd;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.transaction-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+.transaction-table tbody tr:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* Transaction History Styling */
+/* Transaction History Styling */
+#transactionHistory {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 20px;
+    overflow-y: auto; /* Enable scrolling inside the container */
+    max-height: 500px; /* Constrain the height */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+
+
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.transaction-table thead th {
+    background: rgba(255, 255, 255, 0.2);
+    text-align: left;
+    padding: 16px; /* Adjust for a cleaner layout */
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.transaction-table tbody td {
+    padding: 16px;
+    font-size: 0.875rem;
+    color: #dddddd;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.transaction-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+.transaction-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+@media (max-width: 768px) {
+    
+
+    .transaction-table thead {
+        display: none; /* Hide table headers */
+    }
+
+    .transaction-table tbody td {
+        display: block;
+        width: 100%;
+        text-align: left;
+        padding: 8px 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .transaction-table tbody td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-right: 8px;
+        color: #ccc;
+    }
+
+    .transaction-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+}
+
+#transactionHistory::-webkit-scrollbar {
+    width: 8px;
+}
+
+
+
+#transactionHistory::-webkit-scrollbar-thumb {
+    background: #00b4d8;
+    border-radius: 10px;
+}
+
+#transactionHistory::-webkit-scrollbar-thumb:hover {
+    background: #007bff;
+}
+
+
 
 
 
