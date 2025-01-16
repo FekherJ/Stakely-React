@@ -1,38 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import useWallet from '../hooks/useWallet';
+import React, { useState } from 'react';
+import { useWallet } from '../components/WalletProvider';
 import useStaking from '../hooks/useStaking';
 
 const StakingActions = () => {
-  const { connectWallet } = useWallet();
-  const { stakeTokens, withdrawTokens, initializeContract } = useStaking();
+  const { provider, signer, stakingContract } = useWallet();
+  const { stakeTokens, withdrawTokens } = useStaking();
   const [stakeAmount, setStakeAmount] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState('');
-  const [tokenAddress, setTokenAddress] = useState('');
-
-  useEffect(() => {
-    const fetchTokenAddress = async () => {
-      try {
-        const { provider, signer } = await connectWallet();
-        const contract = await initializeContract(provider, signer);
-        setTokenAddress(await contract.stakingToken());
-      } catch (error) {
-        console.error('Failed to fetch token address:', error.message);
-      }
-    };
-
-    fetchTokenAddress();
-  }, []);
 
   const handleStake = async () => {
+    if (!provider || !signer || !stakingContract) {
+      alert('Please connect your wallet and ensure the staking contract is initialized.');
+      return;
+    }
     try {
-      await stakeTokens(stakeAmount, tokenAddress);
-      alert(`Staked ${stakeAmount} tokens successfully!`);
+      await stakeTokens(stakeAmount);
+      alert(`Successfully staked ${stakeAmount} tokens.`);
     } catch (error) {
-      console.error('Staking error:', error.message);
+      console.error('Error staking tokens:', error.message);
+      alert('Failed to stake tokens.');
     }
   };
 
   const handleWithdraw = async () => {
+    if (!provider || !signer || !stakingContract) {
+      alert('Please connect your wallet first.');
+      return;
+    }
     try {
       await withdrawTokens(withdrawAmount);
       alert(`Withdrew ${withdrawAmount} tokens successfully!`);

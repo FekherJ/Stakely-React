@@ -1,6 +1,14 @@
 // src/config/config.js
 export const CONTRACT_ADDRESSES = {
-    localhost: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0', // Replace with your localhost address + ABI sync : cp artifacts/contracts/Staking.sol/staking.json src/abi/staking_abi.json
+    localhost: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0', // Replace with your localhost Staking contract address 
+    // ABI sync : 
+                // cp artifacts/contracts/Staking.sol/staking.json src/abi/staking_abi.json
+                // cp artifacts/contracts/ERC20Mock.sol/ERC20Mock.json src/abi/ERC20Mock_abi.json
+    
+    
+    
+    
+    
     //sepolia: '0xSepoliaContractAddress', // Replace with your Sepolia contract address
   };
   

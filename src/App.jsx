@@ -1,29 +1,30 @@
-// This component sets up routing and combines all the parts of the DApp.
-
-
-
-import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import Header from './components/Header';
+import React, { useState } from 'react'; // Add useState here
+import { useWallet } from './components/WalletProvider';
 import Dashboard from './components/Dashboard';
 import StakingActions from './components/StakingActions';
-import TransactionHistory from './components/TransactionHistory';
-import Footer from './components/Footer';
 
-const App = () => {
+const MainApp = () => {
+  const { connectWallet, address } = useWallet();
+  const [error, setError] = useState(''); // Correctly imported now
+
+  const handleConnect = async () => {
+    try {
+      await connectWallet();
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
   return (
-    <Router>
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 to-gray-800 text-white flex flex-col">
-        <Header />
-        <main className="container mx-auto px-6 flex-grow">
-          <Dashboard />
-          <StakingActions />
-          <TransactionHistory />
-        </main>
-        <Footer />
-      </div>
-    </Router>
+    <div>
+      <button onClick={handleConnect}>
+        {address ? `Connected: ${address.substring(0, 6)}...` : 'Connect Wallet'}
+      </button>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <Dashboard />
+      <StakingActions />
+    </div>
   );
 };
 
-export default App;
+export default MainApp;

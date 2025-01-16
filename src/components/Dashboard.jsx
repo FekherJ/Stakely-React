@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import useWallet from '../hooks/useWallet';
+import { useWallet } from '../components/WalletProvider';
 import useStaking from '../hooks/useStaking';
 
 const Dashboard = () => {
-  const { connectWallet } = useWallet();
+  const { provider, signer, stakingContract } = useWallet();
   const { fetchDashboardData } = useStaking();
   const [balances, setBalances] = useState({
     wallet: '0.0000 ETH',
@@ -14,18 +14,20 @@ const Dashboard = () => {
 
   useEffect(() => {
     const loadBalances = async () => {
+      if (!stakingContract) {
+        console.warn('Staking contract is not initialized yet.');
+        return;
+      }
       try {
-        const { provider, signer } = await connectWallet();
-        const dashboardData = await fetchDashboardData(provider, signer);
+        const dashboardData = await fetchDashboardData();
         setBalances(dashboardData);
       } catch (error) {
         console.error('Error loading dashboard:', error.message);
-        alert('Failed to load dashboard. Check your wallet and network settings.');
+        alert('Failed to load dashboard data.');
       }
     };
-
     loadBalances();
-  }, []);
+  }, [stakingContract]);
 
   return (
     <div className="dashboard glass p-6 rounded-lg shadow-lg">

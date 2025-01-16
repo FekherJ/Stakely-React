@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import useWallet from '../hooks/useWallet';
+import { useWallet } from '../components/WalletProvider';
 import useStaking from '../hooks/useStaking';
 
 const TransactionHistory = () => {
-  const { connectWallet } = useWallet();
+  const { stakingContract } = useWallet();
   const { fetchTransactionHistory } = useStaking();
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
     const loadHistory = async () => {
+      if (!stakingContract) {
+        console.warn('Staking contract is not initialized.');
+        return;
+      }
       try {
-        const { provider, signer } = await connectWallet();
-        const history = await fetchTransactionHistory(provider, signer);
+        const history = await fetchTransactionHistory();
         setTransactions(history);
       } catch (error) {
-        console.error('Failed to fetch transactions:', error.message);
+        console.error('Failed to fetch transaction history:', error.message);
+        alert('Error loading transaction history.');
       }
     };
-
     loadHistory();
-  }, []);
+  }, [stakingContract]);
 
   return (
     <div className="transaction-history glass p-6 rounded-lg shadow-lg mt-6">
