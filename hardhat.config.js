@@ -20,6 +20,7 @@ module.exports = {
 
   localhost: {
     url: "http://127.0.0.1:8545", // Hardhat's default local network
+    chainId: 31337,
     gas: 8000000, // Set the gas limit
     timeout: 600000,  // Set a longer timeout to avoid deployment issues
   },

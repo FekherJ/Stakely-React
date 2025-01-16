@@ -1,0 +1,1 @@
+// Centralized interaction with smart contracts
